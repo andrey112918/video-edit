@@ -122,6 +122,9 @@ def main() -> None:
         durations[s["id"]] = round(total, 3)
         (HERE / "captions" / f"words_{s['id']}.json").write_text(
             json.dumps(word_chunks(words), ensure_ascii=False, indent=1))
+        (HERE / "captions" / f"wordsraw_{s['id']}.json").write_text(
+            json.dumps([{"text": w, "start": round(a, 3), "end": round(b, 3)}
+                        for w, a, b in words], ensure_ascii=False, indent=1))
         wpm = len(s["text"].split()) / total * 60
         print(f"  {s['id']} {s['slug']:16s} {total:6.2f}s  {wpm:5.0f} wpm")
 
