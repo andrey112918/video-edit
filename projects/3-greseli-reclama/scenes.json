@@ -1,0 +1,40 @@
+{
+  "title": "3 greșeli care fac o reclamă să piardă bani",
+  "scenes": [
+    {
+      "id": "01",
+      "slug": "hook",
+      "visual": "ideogram",
+      "asset": "images/01_hook.png",
+      "text": "Majoritatea antreprenorilor cred că dacă o reclamă nu funcționează, trebuie să schimbe reclama. De multe ori, problema nu este reclama."
+    },
+    {
+      "id": "02",
+      "slug": "greseli",
+      "visual": "ideogram",
+      "asset": "images/02_greseli.png",
+      "text": "Problema este oferta. Sau pagina unde ajung oamenii. Sau faptul că mesajul este complet generic."
+    },
+    {
+      "id": "03",
+      "slug": "exemplu",
+      "visual": "ideogram",
+      "asset": "images/03_exemplu.png",
+      "text": "Să spunem că vinzi cursuri de engleză. Dacă reclama ta spune doar: învață engleză rapid. Nu ai spus nimic diferit față de alte o mie de școli."
+    },
+    {
+      "id": "04",
+      "slug": "mesaj_concret",
+      "visual": "ideogram",
+      "asset": "images/04_mesaj_concret.png",
+      "text": "În schimb: copilul tău poate începe să poarte conversații simple în engleză după primele 30 de zile. Acum ai un rezultat concret."
+    },
+    {
+      "id": "05",
+      "slug": "cta",
+      "visual": "ideogram",
+      "asset": "images/05_cta.png",
+      "text": "De asta, înainte să schimbi reclama, uită-te la mesaj."
+    }
+  ]
+}

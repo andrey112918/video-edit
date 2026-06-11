@@ -1,0 +1,27 @@
+{
+  "name": "3-greseli-reclama",
+  "template": "concept-explainer-short",
+  "brand": "default",
+  "created": "2026-06-11T13:20:00Z",
+  "updated": "2026-06-11T13:40:00Z",
+  "phase": "complete",
+  "scenes": [
+    { "id": "01", "slug": "hook", "visual": "pil-card", "asset": "images/01_hook.png", "status": "ready" },
+    { "id": "02", "slug": "greseli", "visual": "pil-card", "asset": "images/02_greseli.png", "status": "ready" },
+    { "id": "03", "slug": "exemplu", "visual": "pil-card", "asset": "images/03_exemplu.png", "status": "ready" },
+    { "id": "04", "slug": "mesaj_concret", "visual": "pil-card", "asset": "images/04_mesaj_concret.png", "status": "ready" },
+    { "id": "05", "slug": "cta", "visual": "pil-card", "asset": "images/05_cta.png", "status": "ready" }
+  ],
+  "audio": {
+    "voiceover": {
+      "file": "audio/scenes/",
+      "status": "present",
+      "provider": "piper ro_RO-mihai-medium (offline, via gen_vo_local.py)"
+    },
+    "music": { "status": "none" }
+  },
+  "estimates": { "totalDurationSeconds": 44.4 },
+  "sessions": [
+    { "date": "2026-06-11", "summary": "Project created from Romanian copywriting script; PIL cards, offline piper VO, karaoke captions, final render out/short.mp4" }
+  ]
+}
