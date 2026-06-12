@@ -14,34 +14,75 @@ Singura dependență externă este Google Fonts.
 ### PROMPT DE COPIAT ÎN POLSIA
 
 ```
-Replace my current website entirely with the single-file landing page I'm
-providing below. Important rules:
+Replace my current LANDING PAGE with the single-file page I'm providing
+below. My site also has an existing, working GENERATOR tab — that one must
+stay exactly as it is. Important rules:
 
-1. Use the provided HTML/CSS/JS EXACTLY as given. Do not rewrite, "improve"
+1. DO NOT TOUCH THE GENERATOR. My Generator tab/page and its script already
+   work. Do not replace, rewrite, restyle or merge its script with the new
+   code. The file I'm giving you is ONLY the landing page.
+2. Wire the two "Încearcă Generatorul" buttons (one in the sticky header,
+   one in the hero) to my existing Generator tab's route. They currently
+   have href="/generator" as a placeholder — swap in the real route. There
+   are HTML comments marking both spots ("POLSIA: înlocuiește href...").
+3. The "Forja AI în acțiune" card in the hero is a decorative typewriter
+   DEMO, not the real generator. Keep it as-is alongside the real Generator
+   tab — they serve different purposes (the card teases, the tab delivers).
+4. Use the provided HTML/CSS/JS EXACTLY as given. Do not rewrite, "improve"
    or paraphrase the Romanian copy — it is final, including diacritics.
-2. Keep everything in one page with the same section order:
+5. Keep everything in one page with the same section order:
    header → hero → marquee → problema → servicii (incl. the before/after
    slider) → proces (interactive timeline) → manifest → contact (WhatsApp
    qualifier chat) → footer.
-3. The <script> block at the end is required — it powers: scroll progress,
-   scroll reveals, count-up stats, the hero typewriter card with clickable
-   tags, the draggable before/after slider (#ba-grab), the accordion
-   timeline (#timeline), and the 6-question contact chat (#chat-body) that
-   opens WhatsApp/email with prefilled answers. Include it unchanged.
-4. Keep the Google Fonts <link> tags (Playfair Display, Inter, JetBrains
+6. The <script> block at the end of the landing page is required — it
+   powers: scroll progress, scroll reveals, count-up stats, the hero
+   typewriter card with clickable tags, the draggable before/after slider
+   (#ba-grab), the accordion timeline (#timeline), and the 6-question
+   contact chat (#chat-body) that opens WhatsApp/email with prefilled
+   answers. Include it unchanged. It is scoped to the landing page only
+   and will not conflict with the Generator's script.
+7. Keep the Google Fonts <link> tags (Playfair Display, Inter, JetBrains
    Mono) in <head>.
-5. Keep these real contact details exactly: amorosanu72@gmail.com and
+8. Keep these real contact details exactly: amorosanu72@gmail.com and
    WhatsApp +40 741 672 024 (wa.me/40741672024).
-6. If your platform requires splitting into components, split only on the
+9. If your platform requires splitting into components, split only on the
    section comments (<!-- ===== SECTION ===== -->) and keep all CSS
    selectors and element IDs intact (the JS targets them by ID).
-7. Page language is Romanian: keep <html lang="ro"> and the meta
-   description.
+10. Page language is Romanian: keep <html lang="ro"> and the meta
+    description.
+11. On the Generator tab, you may apply ONLY the visual theme so it matches
+    the landing page (colors, fonts from the design tokens listed below) —
+    but never change its logic, script or functionality. If in doubt, leave
+    the Generator completely untouched.
 
 [PASTE THE FULL CONTENTS OF index.html HERE]
 ```
 
 ---
+
+## Tab-ul Generator (există deja — NU se înlocuiește)
+
+Generatorul tău de pe Polsia funcționează deja și are propriul script.
+Reguli pentru integrare:
+
+- **Scriptul generatorului rămâne neatins.** Landing page-ul nu conține și
+  nu are nevoie de niciun cod de generator. Scriptul landing-ului e izolat
+  (un IIFE care își caută elementele după ID) și nu intră în conflict cu el.
+- **Legătura dintre landing și generator:** cele două butoane "Încearcă
+  Generatorul" (header + hero) au `href="/generator"` ca placeholder, cu
+  comentarii HTML care marchează locul. Polsia trebuie doar să pună ruta
+  reală a tab-ului.
+- **Cardul "Forja AI în acțiune" din hero NU e generatorul** — e o
+  demonstrație vizuală (typewriter cu exemple fixe) care face teasing spre
+  generatorul real. Se păstrează amândouă.
+- **Opțional, doar vizual:** generatorul poate primi tema landing-ului ca să
+  arate unitar — tokens din `:root`: fundal `#0d0c0a`, text `#f4efe6`,
+  accent `#f5a623`, fonturi Playfair Display / Inter / JetBrains Mono,
+  butoane pill cu gradient amber. Logica și scriptul lui rămân exact cum sunt.
+- **Opțional, dacă generatorul suportă parametri:** tag-urile din cardul
+  Forja (Ad Copy / Landing Page / Email / Brand Voice) pot deveni link-uri
+  către generator cu tipul preselectat (ex: `/generator?tip=email`). Doar
+  dacă generatorul citește deja un asemenea parametru — altfel lasă-le cum sunt.
 
 ## Dacă Polsia integrează doar pe bucăți
 

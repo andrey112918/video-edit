@@ -30,6 +30,13 @@
   Fonturi: Playfair Display (display), Inter (body), JetBrains Mono (etichete).
   Limba: română (diacritice corecte). Contact real: amorosanu72@gmail.com,
   WhatsApp +40 741 672 024.
+
+  GENERATOR (IMPORTANT pentru Polsia): site-ul existent are deja un tab
+  Generator funcțional, cu propriul script. NU îl înlocui și NU îi modifica
+  scriptul. Acest fișier este DOAR landing page-ul. Butoanele "Încearcă
+  Generatorul" (header + hero) au href="/generator" — înlocuiește cu ruta
+  reală a tab-ului Generator. Cardul "Forja AI" din hero e doar o demonstrație
+  vizuală (typewriter), nu generatorul real — păstrează-le pe amândouă.
 -->
 <html lang="ro">
 <head>
@@ -579,7 +586,8 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
     <a class="nav-link" href="#servicii">Servicii</a>
     <a class="nav-link" href="#proces">Proces</a>
     <a class="nav-link" href="#contact">Contact</a>
-    <a class="btn btn-primary btn-sm" href="#contact">Încearcă Generatorul</a>
+    <!-- POLSIA: înlocuiește href="/generator" cu ruta reală a tab-ului Generator existent -->
+    <a class="btn btn-primary btn-sm" href="/generator">Încearcă Generatorul</a>
   </nav>
 </header>
 
@@ -595,7 +603,8 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
       <h1 id="hero-title">Cuvinte care chiar <span class="serif-i">funcționează.</span></h1>
       <p class="lede hero-sub">Construim campanii de marketing, reclame și site-uri web care convertesc. Viteza AI, măiestrie umană — pentru companii care au nevoie de copy care <strong style="color:var(--fg)">vinde</strong>, nu doar de copy care sună bine.</p>
       <div class="hero-ctas">
-        <a class="btn btn-primary" href="#contact" data-magnetic>Încearcă Generatorul
+        <!-- POLSIA: înlocuiește href="/generator" cu ruta reală a tab-ului Generator existent -->
+        <a class="btn btn-primary" href="/generator" data-magnetic>Încearcă Generatorul
           <svg class="arr" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
         <a class="btn btn-ghost" href="#servicii">Vezi serviciile</a>
