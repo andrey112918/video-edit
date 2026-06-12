@@ -170,10 +170,14 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 .forge-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem}
 .forge-tag{
   font-family:var(--font-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
-  padding:.42rem .8rem;border-radius:999px;border:1px solid var(--border);color:var(--fg-muted);
+  padding:.6rem .9rem;min-height:38px;border-radius:999px;border:1px solid var(--border);
+  color:var(--fg-muted);background:transparent;cursor:pointer;touch-action:manipulation;
   transition:all .25s var(--ease);
 }
+.forge-tag:hover{border-color:var(--border-strong);color:var(--fg)}
+.forge-tag:active{transform:scale(.95)}
 .forge-tag.on{border-color:var(--accent);color:var(--accent-bright);background:var(--accent-glow)}
+.forge-tag:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:999px}
 
 .scroll-cue{
   position:absolute;left:50%;bottom:1.6rem;transform:translateX(-50%);
@@ -358,11 +362,11 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
       <div class="forge-body">
         <p class="forge-label"><span class="pulse" aria-hidden="true"></span><span id="forge-type">Ad Copy</span></p>
         <p class="forge-text"><span id="forge-out"></span><span class="caret" aria-hidden="true"></span></p>
-        <div class="forge-tags" id="forge-tags">
-          <span class="forge-tag on">Ad Copy</span>
-          <span class="forge-tag">Landing Page</span>
-          <span class="forge-tag">Email</span>
-          <span class="forge-tag">Brand Voice</span>
+        <div class="forge-tags" id="forge-tags" role="tablist" aria-label="Tipuri de copy generate">
+          <button class="forge-tag on" role="tab" aria-selected="true">Ad Copy</button>
+          <button class="forge-tag" role="tab" aria-selected="false">Landing Page</button>
+          <button class="forge-tag" role="tab" aria-selected="false">Email</button>
+          <button class="forge-tag" role="tab" aria-selected="false">Brand Voice</button>
         </div>
       </div>
     </div>
@@ -618,23 +622,37 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
     {type:"Brand Voice", text:"Vocea ta. Mai clară, mai curajoasă, imposibil de confundat cu alta."}
   ];
   var outEl = document.getElementById("forge-out"), typeEl = document.getElementById("forge-type"),
-      tags = document.querySelectorAll(".forge-tag"), si = 0;
-  function setTag(i){ tags.forEach(function(t,k){ t.classList.toggle("on", k === i); }); }
-  function typeNext(){
-    var s = samples[si]; typeEl.textContent = s.type; setTag(si);
-    if (reduced){ outEl.textContent = s.text; si = (si + 1) % samples.length; setTimeout(typeNext, 4200); return; }
+      tags = document.querySelectorAll(".forge-tag"), si = 0, timer = null, run = 0;
+  function setTag(i){
+    tags.forEach(function(t,k){
+      t.classList.toggle("on", k === i);
+      t.setAttribute("aria-selected", k === i ? "true" : "false");
+    });
+  }
+  function show(i, holdMs){
+    si = i; run++;                       // run id invalidates any in-flight typing loop
+    var myRun = run, s = samples[si];
+    clearTimeout(timer);
+    typeEl.textContent = s.type; setTag(si);
+    function queueNext(delay){
+      timer = setTimeout(function(){ show((si + 1) % samples.length, 0); }, delay);
+    }
+    if (reduced){ outEl.textContent = s.text; queueNext(4200 + holdMs); return; }
     var ci = 0; outEl.textContent = "";
     (function step(){
+      if (myRun !== run) return;         // a click started a newer run; stop this one
       if (ci <= s.text.length){
         outEl.textContent = s.text.slice(0, ci++);
-        setTimeout(step, 26 + Math.random() * 34);
+        timer = setTimeout(step, 26 + Math.random() * 34);
       } else {
-        si = (si + 1) % samples.length;
-        setTimeout(typeNext, 2600);
+        queueNext(2600 + holdMs);
       }
     })();
   }
-  if (outEl) typeNext();
+  tags.forEach(function(t, k){
+    t.addEventListener("click", function(){ show(k, 5000); }); // linger longer after a manual pick
+  });
+  if (outEl) show(0, 0);
 
   /* Subtle parallax orbs */
   if (!reduced){
