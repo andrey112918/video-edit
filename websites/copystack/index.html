@@ -1,4 +1,36 @@
 <!DOCTYPE html>
+<!--
+  CopyStack — landing page completă, un singur fișier (HTML + CSS + JS inline).
+  Fără build step, fără dependențe externe în afară de Google Fonts.
+
+  STRUCTURA (în ordine):
+    1. HEADER     — nav sticky cu blur, ancore + CTA primar
+    2. HERO       — titlu animat cuvânt-cu-cuvânt, 2 CTA-uri, social proof,
+                    card "Forja AI" cu typewriter (tag-uri clickabile)
+    3. MARQUEE    — bandă rulantă cu servicii
+    4. PROBLEMA   — AI slop vs artizanat: 2 paragrafe, panou comparativ
+                    rău/bun, 3 statistici cu count-up
+    5. SERVICII   — 6 carduri (email, reclame, site-uri, funnel, strategie,
+                    SEO&conținut) fiecare cu beneficii; + slider Înainte/După
+                    cu 2 site-uri mock derulabile și mâner draggabil
+    6. PROCES     — timeline interactiv: linie de progres la scroll,
+                    6 pași acordeon expandabili
+    7. MANIFEST   — secțiune "Est. 2026" cu glow
+    8. CONTACT    — widget chat stil WhatsApp: 6 întrebări de calificare,
+                    răspunsurile se trimit prefilled pe WhatsApp/Email
+    9. FOOTER
+
+  COMPORTAMENTE JS (toate în <script>-ul de la final, fără librării):
+    progres scroll, reveal-on-scroll (.rv), count-up ([data-count]),
+    typewriter Forja, parallax orbs, buton magnetic, timeline (#timeline),
+    slider comparație (#ba-grab), chat calificare (#chat-body).
+    Toate respectă prefers-reduced-motion.
+
+  DESIGN TOKENS: definite în :root (culori, fonturi, easing, radius).
+  Fonturi: Playfair Display (display), Inter (body), JetBrains Mono (etichete).
+  Limba: română (diacritice corecte). Contact real: amorosanu72@gmail.com,
+  WhatsApp +40 741 672 024.
+-->
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
@@ -539,6 +571,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 <div class="progress" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
+<!-- ================= HEADER ================= -->
 <header class="header" id="header">
   <a class="logo" href="#top">Copy<em>Stack</em></a>
   <nav class="nav" aria-label="Navigație principală">
@@ -1021,6 +1054,7 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 
 </main>
 
+<!-- ================= FOOTER ================= -->
 <footer class="footer">
   <div class="wrap">
     <a class="logo" href="#top" style="font-size:1.05rem">Copy<em>Stack</em></a>
