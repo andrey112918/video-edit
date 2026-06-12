@@ -240,24 +240,74 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 .card li{display:flex;gap:.7rem;align-items:baseline;color:var(--fg-muted);font-size:.93rem}
 .card li::before{content:"—";color:var(--accent);flex:none}
 
-/* ============ Proces ============ */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:clamp(2.5rem,5vw,3.5rem);counter-reset:step}
-@media(max-width:860px){.steps{grid-template-columns:1fr}}
-.step{
-  border:1px solid var(--border);border-radius:var(--radius);padding:2rem 1.8rem;background:var(--surface);
-  position:relative;transition:border-color .3s var(--ease),transform .3s var(--ease);
+/* ============ Problema: slop vs craft ============ */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:clamp(2.5rem,5vw,3.5rem)}
+@media(max-width:760px){.compare{grid-template-columns:1fr}}
+.panel{border:1px solid var(--border);border-radius:var(--radius);padding:1.9rem 1.7rem;background:var(--surface);transition:transform .3s var(--ease)}
+.panel:hover{transform:translateY(-4px)}
+.panel.bad{border-color:rgba(248,113,113,.22);background:rgba(248,113,113,.035)}
+.panel.good{
+  border-color:rgba(245,166,35,.42);
+  background:linear-gradient(165deg,rgba(245,166,35,.08),rgba(255,255,255,.02));
+  box-shadow:0 26px 64px -30px rgba(245,166,35,.28);
 }
-.step:hover{border-color:rgba(245,166,35,.4);transform:translateY(-4px)}
-.step-num{
-  font-family:var(--font-display);font-weight:900;font-size:2.6rem;color:transparent;
-  -webkit-text-stroke:1.5px var(--accent);line-height:1;margin-bottom:1.1rem;
+.panel-tag{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:.55rem;padding:.45rem .95rem;border-radius:999px;margin-bottom:1.2rem;
 }
-.step p{color:var(--fg-muted);font-size:.95rem;margin-top:.65rem}
-.step:not(:last-child)::after{
-  content:"";position:absolute;top:50%;right:-1.25rem;width:1.25rem;height:1px;
-  background:linear-gradient(90deg,var(--accent),transparent);
+.panel.bad .panel-tag{color:#f87171;border:1px solid rgba(248,113,113,.3)}
+.panel.good .panel-tag{color:var(--accent-bright);border:1px solid rgba(245,166,35,.45);background:var(--accent-glow)}
+.panel ul{list-style:none;display:grid;gap:.75rem}
+.panel li{display:flex;gap:.8rem;align-items:baseline;font-size:.95rem;color:var(--fg-muted)}
+.panel.bad li::before{content:"✕";color:#f87171;font-weight:700;flex:none}
+.panel.good li{color:var(--fg)}
+.panel.good li::before{content:"✓";color:var(--accent);font-weight:700;flex:none}
+
+/* ============ Proces: interactive timeline ============ */
+.timeline{position:relative;margin-top:clamp(2.5rem,5vw,4rem);display:grid;gap:1.1rem}
+.tl-rail,.tl-fill{position:absolute;left:27px;top:14px;bottom:14px;width:2px;border-radius:2px}
+.tl-rail{background:var(--border)}
+.tl-fill{bottom:auto;height:0;background:linear-gradient(180deg,var(--accent),var(--accent-bright));box-shadow:0 0 14px rgba(245,166,35,.5)}
+.tl-step{position:relative;padding-left:74px}
+@media(max-width:560px){.tl-step{padding-left:60px}.tl-rail,.tl-fill{left:21px}}
+.tl-dot{
+  position:absolute;left:17px;top:24px;width:22px;height:22px;border-radius:50%;
+  border:2px solid var(--border-strong);background:var(--bg-base);z-index:1;
+  transition:border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease);
 }
-@media(max-width:860px){.step:not(:last-child)::after{display:none}}
+@media(max-width:560px){.tl-dot{left:11px}}
+.tl-dot::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--accent);opacity:0;transform:scale(.4);transition:all .3s var(--ease)}
+.tl-step.active .tl-dot{border-color:var(--accent);box-shadow:0 0 0 7px var(--accent-glow);transform:scale(1.08)}
+.tl-step.active .tl-dot::after{opacity:1;transform:scale(1)}
+.tl-card{
+  border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);overflow:hidden;
+  transition:border-color .3s var(--ease),box-shadow .3s var(--ease),transform .3s var(--ease);
+}
+.tl-step.active .tl-card{border-color:rgba(245,166,35,.35)}
+.tl-step.open .tl-card{border-color:rgba(245,166,35,.5);box-shadow:0 26px 60px -30px rgba(245,166,35,.22);transform:translateX(6px)}
+.tl-head{
+  display:flex;align-items:center;gap:1.1rem;width:100%;padding:1.3rem 1.5rem;min-height:64px;
+  background:none;border:0;text-align:left;color:inherit;cursor:pointer;touch-action:manipulation;
+}
+.tl-num{
+  font-family:var(--font-display);font-weight:900;font-size:1.85rem;line-height:1;flex:none;
+  color:transparent;-webkit-text-stroke:1.3px var(--fg-faint);transition:all .3s var(--ease);
+}
+.tl-step.active .tl-num{-webkit-text-stroke:1.3px var(--accent)}
+.tl-titles{flex:1;min-width:0}
+.tl-titles h3{font-size:1.22rem}
+.tl-meta{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint);margin-top:.3rem;display:block}
+.tl-step.active .tl-meta{color:var(--accent)}
+.tl-chev{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;transition:transform .4s var(--ease),border-color .3s var(--ease)}
+.tl-chev svg{width:15px;height:15px;stroke:var(--fg-muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tl-step.open .tl-chev{transform:rotate(180deg);border-color:var(--accent)}
+.tl-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.tl-step.open .tl-body{grid-template-rows:1fr}
+.tl-body-in{overflow:hidden}
+.tl-body p{padding:0 1.5rem;color:var(--fg-muted);font-size:.96rem}
+.tl-body ul{list-style:none;padding:1rem 1.5rem 1.5rem;display:grid;gap:.55rem}
+.tl-body li{display:flex;gap:.7rem;align-items:baseline;color:var(--fg-muted);font-size:.93rem}
+.tl-body li::before{content:"→";color:var(--accent);flex:none}
 
 /* ============ Manifest ============ */
 .manifest{text-align:center;overflow:hidden}
@@ -275,25 +325,76 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 /* ============ Contact ============ */
 .contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,4rem);align-items:start;margin-top:1rem}
 @media(max-width:860px){.contact-grid{grid-template-columns:1fr}}
-.contact-actions{display:grid;gap:.9rem;margin-top:2.2rem;max-width:430px}
-.contact-line{
-  display:flex;align-items:center;gap:1rem;padding:1.15rem 1.4rem;border-radius:14px;
-  border:1px solid var(--border);background:var(--surface);text-decoration:none;min-height:60px;
-  transition:border-color .25s var(--ease),transform .25s var(--ease),background .25s var(--ease);
-}
-.contact-line:hover{border-color:rgba(245,166,35,.45);transform:translateX(6px);background:rgba(255,255,255,.06)}
-.contact-line svg{width:21px;height:21px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.contact-line.wa svg{stroke:var(--green)}
-.contact-line b{font-weight:600}
-.contact-line span{color:var(--fg-faint);font-size:.85rem;margin-left:auto;flex:none}
 .contact-note{color:var(--fg-faint);font-size:.86rem;margin-top:1.4rem}
-.avail{
-  display:inline-flex;align-items:center;gap:.6rem;border:1px solid rgba(74,222,128,.3);
-  background:rgba(74,222,128,.07);color:var(--green);border-radius:999px;
-  padding:.5rem 1.05rem;font-size:.84rem;font-weight:500;margin-bottom:1.6rem;
-}
-.avail .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.6s ease-in-out infinite}
 
+/* ============ Servicii: benefit lists ============ */
+.card-why{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);margin-top:1.4rem;display:flex;align-items:center;gap:.7rem;
+}
+.card-why::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,rgba(245,166,35,.4),transparent)}
+.card ul.checks li::before{content:"✓";color:var(--accent)}
+
+/* ============ Contact: WhatsApp qualifier widget ============ */
+.chat{
+  border:1px solid var(--border);border-radius:22px;overflow:hidden;
+  background:linear-gradient(170deg,rgba(74,222,128,.05),rgba(255,255,255,.02) 40%),var(--bg-elevated);
+  box-shadow:0 34px 90px -34px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.chat-head{display:flex;align-items:center;gap:.9rem;padding:1.05rem 1.3rem;border-bottom:1px solid var(--border);background:rgba(255,255,255,.025)}
+.chat-ava{
+  width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),#e88f12);color:#14120e;
+  font-family:var(--font-display);font-weight:900;font-size:1rem;
+}
+.chat-id b{display:block;font-size:.98rem}
+.chat-id span{display:flex;align-items:center;gap:.45rem;font-size:.78rem;color:var(--green)}
+.chat-id .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s ease-in-out infinite}
+.chat-prog{height:3px;background:var(--border)}
+.chat-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-bright));transition:width .45s var(--ease)}
+.chat-body{padding:1.3rem;min-height:330px;display:flex;flex-direction:column;gap:.9rem}
+.bub{
+  max-width:88%;padding:.9rem 1.15rem;border-radius:16px;font-size:.95rem;line-height:1.55;
+  animation:bubin .4s var(--ease) both;
+}
+@keyframes bubin{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.bub.bot{background:rgba(255,255,255,.06);border:1px solid var(--border);border-top-left-radius:5px;align-self:flex-start}
+.bub.me{background:rgba(74,222,128,.13);border:1px solid rgba(74,222,128,.25);border-top-right-radius:5px;align-self:flex-end;color:var(--fg)}
+.bub.bot .q-count{display:block;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin-bottom:.4rem}
+.chat-chips{display:flex;flex-wrap:wrap;gap:.55rem;animation:bubin .4s var(--ease) .1s both}
+.chip{
+  font-size:.88rem;font-weight:500;padding:.6rem 1.05rem;min-height:42px;border-radius:999px;
+  border:1px solid var(--border-strong);background:transparent;color:var(--fg-muted);
+  cursor:pointer;touch-action:manipulation;transition:all .22s var(--ease);
+}
+.chip:hover{border-color:var(--accent);color:var(--fg)}
+.chip:active{transform:scale(.95)}
+.chip.on{border-color:var(--green);background:rgba(74,222,128,.12);color:var(--green)}
+.chat-inrow{display:flex;gap:.6rem;animation:bubin .4s var(--ease) .1s both}
+.chat-input{
+  flex:1;min-height:48px;padding:.8rem 1.1rem;border-radius:14px;font:inherit;font-size:.95rem;
+  background:rgba(255,255,255,.05);border:1px solid var(--border-strong);color:var(--fg);
+  transition:border-color .2s var(--ease);
+}
+.chat-input::placeholder{color:var(--fg-faint)}
+.chat-input:focus{outline:none;border-color:var(--accent)}
+.chat-nav{display:flex;align-items:center;gap:.7rem;margin-top:auto;padding-top:.6rem}
+.chat-back{
+  background:none;border:0;color:var(--fg-faint);font-size:.88rem;min-height:44px;padding:.5rem .6rem;
+  display:inline-flex;align-items:center;gap:.4rem;transition:color .2s var(--ease);
+}
+.chat-back:hover{color:var(--fg)}
+.chat-next{margin-left:auto}
+.chat-next[disabled]{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.chat-start{display:flex;flex-direction:column;align-items:flex-start;gap:1rem}
+.chat-final{display:grid;gap:.7rem;animation:bubin .4s var(--ease) both}
+.chat-final .btn{width:100%}
+.btn-wa{background:linear-gradient(135deg,#34d36b,#1faf52);color:#06230f;box-shadow:0 10px 36px -10px rgba(52,211,107,.4)}
+.btn-wa:hover{transform:translateY(-2px);box-shadow:0 14px 44px -8px rgba(52,211,107,.5)}
+.contact-direct{display:flex;flex-wrap:wrap;gap:1.4rem;margin-top:1.5rem;font-size:.9rem}
+.contact-direct a{color:var(--fg-muted);text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;min-height:44px;transition:color .2s var(--ease)}
+.contact-direct a:hover{color:var(--accent-bright)}
+.contact-direct svg{width:17px;height:17px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 /* ============ Footer ============ */
 .footer{border-top:1px solid var(--border);padding-block:2.2rem;color:var(--fg-faint);font-size:.88rem}
 .footer .wrap{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between}
@@ -392,23 +493,47 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 <section id="problema">
   <div class="wrap">
     <p class="eyebrow rv">Problema</p>
-    <h2 class="rv rv-d1">AI scrie rapid. Sună a AI.<br><span class="serif-i">Noi reparăm asta.</span></h2>
+    <h2 class="rv rv-d1">Piața e inundată de <span class="serif-i">AI slop.</span><br>Noi livrăm artizanat.</h2>
     <div class="cols-2">
-      <p class="rv rv-d2">Majoritatea marketingului este zgomot. Șabloane generice, sloganuri de uitat, copy care ar fi putut fi scris de un robot — <strong>pentru că așa a fost</strong>. Afacerile se îneacă în conținut pe care nimeni nu-l citește.</p>
-      <p class="rv rv-d3">CopyStack combină viteza AI cu măiestria umană senior. Știm când să lăsăm mașina să lucreze și când scriitorul trebuie să intervină. Rezultatul este copy care <strong>sună uman, convertește cititorii</strong> și reprezintă cu adevărat brandul tău.</p>
+      <p class="rv rv-d2">Internetul s-a umplut de conținut generat în masă: aceleași introduceri pompoase, aceleași fraze călduțe, aceleași emailuri pe care le ștergi fără să le deschizi. Clienții tăi simt <strong>instant</strong> când un text e scris de un robot — și brandurile care publică zgomot devin invizibile.</p>
+      <p class="rv rv-d3">La CopyStack, AI-ul e doar unealta — <strong>nu autorul</strong>. Oameni reali fac research-ul, gândesc strategia și șlefuiesc fiecare frază. Folosim mașina pentru viteză și variante, dar fiecare cuvânt care ajunge la publicul tău trece prin mâna unui copywriter senior.</p>
     </div>
+
+    <div class="compare">
+      <div class="panel bad rv">
+        <span class="panel-tag">Copy generat în masă</span>
+        <ul>
+          <li>Sună exact ca al concurenței — pentru că e scos din același model</li>
+          <li>Zero research, zero strategie, zero înțelegere a clientului</li>
+          <li>Fraze generice care nu spun nimic și nu cer nimic</li>
+          <li>Cititorii îl ignoră, Google îl retrogradează</li>
+          <li>Erodează încet încrederea în brandul tău</li>
+        </ul>
+      </div>
+      <div class="panel good rv rv-d1">
+        <span class="panel-tag">CopyStack — AI + om</span>
+        <ul>
+          <li>Voce unică, imposibil de confundat cu altcineva</li>
+          <li>Research real despre piața, competiția și clienții tăi</li>
+          <li>Strategie înainte de fiecare frază — fiecare cuvânt are un scop</li>
+          <li>Scris pentru oameni, optimizat pe date</li>
+          <li>Construiește încredere care se transformă în vânzări</li>
+        </ul>
+      </div>
+    </div>
+
     <div class="stats">
       <div class="stat rv">
-        <p class="stat-num"><span data-count="42" data-prefix="$" data-suffix="B">$0B</span></p>
-        <p class="stat-cap">Piața globală de copywriting până în 2030</p>
+        <p class="stat-num"><span data-count="7" data-suffix="x">0x</span></p>
+        <p class="stat-cap"><strong style="color:var(--fg)">Conversie mai bună</strong> când un om rafinează ce a scris AI-ul, față de AI singur</p>
       </div>
       <div class="stat rv rv-d1">
-        <p class="stat-num"><span data-count="31" data-suffix="%">0%</span></p>
-        <p class="stat-cap">Dintre companiile SaaS cheltuiesc acum $15K+/lună pe conținut</p>
+        <p class="stat-num"><span data-count="8" data-suffix="s">0s</span></p>
+        <p class="stat-cap"><strong style="color:var(--fg)">Atât durează atenția</strong> unui vizitator. Copy-ul generic o pierde — al nostru o ține</p>
       </div>
       <div class="stat rv rv-d2">
-        <p class="stat-num"><span data-count="7" data-suffix="x">0x</span></p>
-        <p class="stat-cap">Mai bună conversie de la AI + uman vs AI singur</p>
+        <p class="stat-num"><span data-count="100" data-suffix="%">0%</span></p>
+        <p class="stat-cap"><strong style="color:var(--fg)">Din textele livrate</strong> trec printr-un copywriter senior. Zero slop, garantat</p>
       </div>
     </div>
   </div>
@@ -423,50 +548,80 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 
     <div class="cards">
       <article class="card rv">
-        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></div>
-        <h3>Copywriting</h3>
-        <p>Copy pentru site-uri, pagini de aterizare, descrieri de produse, emailuri, creativitate publicitară, voce de brand. Cuvinte care vând fără să țipe.</p>
-        <ul>
-          <li>Homepage &amp; pagini de aterizare</li>
-          <li>Secvențe de email &amp; newslettere</li>
-          <li>Copy pentru reclame (Meta, Google, LinkedIn)</li>
-          <li>Dezvoltare voce de brand</li>
+        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg></div>
+        <h3>Email Marketing</h3>
+        <p>Secvențe de bun-venit, newslettere, automatizări de coș abandonat și campanii de vânzare — scrise să fie deschise, citite și să convertească.</p>
+        <p class="card-why">De ce contează pentru afacerea ta</p>
+        <ul class="checks">
+          <li>Cel mai mare ROI din marketing: în medie ~36€ generați la fiecare 1€ investit</li>
+          <li>Audiența e a ta — nu depinzi de algoritmi sau de prețul reclamelor</li>
+          <li>Automatizările vând non-stop, chiar și când tu dormi</li>
+          <li>Crește valoarea fiecărui client prin retenție și recumpărare</li>
         </ul>
       </article>
 
       <article class="card rv rv-d1">
-        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M21 15V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-4z"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg></div>
-        <h3>Design &amp; Vizual</h3>
-        <p>Design grafic, identitate vizuală, materiale pentru social media, prezentări. Muncă care arată la fel de bine precum sună copy-ul tău.</p>
-        <ul>
-          <li>Logo &amp; identitate vizuală</li>
-          <li>Creativ pentru social media</li>
-          <li>Materiale print &amp; digitale</li>
-          <li>Design de prezentări</li>
+        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l18-7-7 18-2.5-7.5z"/><path d="M14 14.5L21 4"/></svg></div>
+        <h3>Copy pentru Reclame</h3>
+        <p>Hooks, unghiuri și variante pentru Meta, Google, TikTok și LinkedIn. Reclame care opresc scroll-ul în primele două secunde — și conving în următoarele cinci.</p>
+        <p class="card-why">De ce contează pentru afacerea ta</p>
+        <ul class="checks">
+          <li>Copy-ul bun scade costul pe click și pe achiziție — același buget, mai mulți clienți</li>
+          <li>Testăm mai multe unghiuri ca să găsim mesajul câștigător, pe date</li>
+          <li>Mesaj potrivit cu pagina de destinație = conversii, nu doar trafic</li>
+          <li>Scalare predictibilă: știi cât costă fiecare client nou</li>
         </ul>
       </article>
 
       <article class="card rv">
         <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M6 6.5h.01M9 6.5h.01"/></svg></div>
-        <h3>Site-uri Web</h3>
-        <p>Site-uri de marketing și pagini de aterizare cu rată mare de conversie. Construite pentru a transforma vizitatorii în lead-uri, și lead-urile în clienți.</p>
-        <ul>
-          <li>Site-uri de marketing</li>
-          <li>Pagini de aterizare &amp; funnel-uri</li>
-          <li>Site-uri de portofoliu &amp; agenție</li>
-          <li>Webflow / Framer / custom</li>
+        <h3>Site-uri &amp; Landing Pages</h3>
+        <p>Site-uri de marketing și pagini de aterizare construite pentru conversie, în Webflow, Framer sau custom — copy și design gândite împreună, nu lipite la final.</p>
+        <p class="card-why">De ce contează pentru afacerea ta</p>
+        <ul class="checks">
+          <li>Prima impresie se formează în 0,05 secunde — site-ul tău vinde sau pierde instant</li>
+          <li>Credibilitate: 75% din vizitatori judecă firma după site</li>
+          <li>Fiecare secțiune are un singur scop: să împingă vizitatorul spre acțiune</li>
+          <li>Fundație SEO corectă din prima zi</li>
         </ul>
       </article>
 
       <article class="card rv rv-d1">
-        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg></div>
-        <h3>Instrumente AI de Copy</h3>
-        <p>Instrumente personalizate de copywriting alimentate de AI, construite pentru brandul tău. Accelerează producția fără să sacrifici calitatea sau vocea.</p>
-        <ul>
-          <li>Generator de copy pe brand</li>
-          <li>Instrument pentru variații de email &amp; reclame</li>
-          <li>Antrenor AI pentru voce de brand</li>
-          <li>Instrumente personalizate de flux de lucru</li>
+        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg></div>
+        <h3>Funnel-uri de Vânzare</h3>
+        <p>De la primul click până la plată: lead magnet, pagini, emailuri și oferte legate într-un sistem care transformă trafic rece în clienți, pas cu pas.</p>
+        <p class="card-why">De ce contează pentru afacerea ta</p>
+        <ul class="checks">
+          <li>Transformă vizitatori anonimi în clienți pe pilot automat</li>
+          <li>Califică lead-urile înainte să ajungi tu să vorbești cu ele</li>
+          <li>Upsell-uri și oferte care cresc valoarea medie a comenzii</li>
+          <li>Fiecare pas e măsurabil — vezi exact unde pierzi și unde câștigi</li>
+        </ul>
+      </article>
+
+      <article class="card rv">
+        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div>
+        <h3>Strategie Completă de Marketing</h3>
+        <p>Poziționare, mesaje, canale, calendar și buget — planul complet care leagă totul. Tacticile fără strategie sunt doar buget irosit elegant.</p>
+        <p class="card-why">De ce contează pentru afacerea ta</p>
+        <ul class="checks">
+          <li>Poziționare clară: de ce tu, și nu concurența</li>
+          <li>Toate canalele spun aceeași poveste și lucrează împreună</li>
+          <li>Bugetul merge întâi pe ce aduce rezultate, nu pe ce e la modă</li>
+          <li>Plan concret pe 90 de zile, cu obiective măsurabile</li>
+        </ul>
+      </article>
+
+      <article class="card rv rv-d1">
+        <div class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <h3>SEO &amp; Conținut</h3>
+        <p>Articole de blog, descrieri de produse, copy pentru social media și studii de caz — conținut care atrage trafic organic și construiește autoritate.</p>
+        <p class="card-why">De ce contează pentru afacerea ta</p>
+        <ul class="checks">
+          <li>Traficul organic se compune în timp — un articol bun vinde și peste 2 ani</li>
+          <li>Cel mai ieftin canal de achiziție pe termen lung</li>
+          <li>Conținutul uman, cu expertiză reală, e exact ce premiază Google acum</li>
+          <li>Studiile de caz transformă rezultatele tale în argumentul de vânzare suprem</li>
         </ul>
       </article>
     </div>
@@ -477,22 +632,126 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 <section id="proces">
   <div class="wrap">
     <p class="eyebrow rv">Cum funcționează</p>
-    <h2 class="rv rv-d1">Trei pași către copy<br>care <span class="serif-i">convertește.</span></h2>
-    <div class="steps">
-      <article class="step rv">
-        <p class="step-num" aria-hidden="true">01</p>
-        <h3>Brief &amp; Discovery</h3>
-        <p>Înțelegem brandul, publicul și obiectivul. Un brief bun face diferența dintre copy corect și copy care convertește.</p>
+    <h2 class="rv rv-d1">Drumul tău, de la idee<br>la copy care <span class="serif-i">convertește.</span></h2>
+    <p class="lede rv rv-d2">Exact ce se întâmplă din momentul în care ne scrii. Apasă pe fiecare pas ca să vezi detaliile.</p>
+
+    <div class="timeline" id="timeline">
+      <div class="tl-rail" aria-hidden="true"></div>
+      <div class="tl-fill" aria-hidden="true"></div>
+
+      <article class="tl-step rv">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-card">
+          <button class="tl-head" aria-expanded="false">
+            <span class="tl-num" aria-hidden="true">01</span>
+            <span class="tl-titles"><h3>Apel de descoperire</h3><span class="tl-meta">Gratuit · 20 min</span></span>
+            <span class="tl-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="tl-body"><div class="tl-body-in">
+            <p>Ne spui unde ești și unde vrei să ajungi. Îți spunem sincer dacă și cum te putem ajuta — fără jargon, fără presiune de vânzare.</p>
+            <ul>
+              <li>Discutăm obiectivele, publicul și ce ai încercat până acum</li>
+              <li>Identificăm cele mai rapide câștiguri pentru afacerea ta</li>
+              <li>Pleci cu idei aplicabile chiar dacă nu lucrăm împreună</li>
+            </ul>
+          </div></div>
+        </div>
       </article>
-      <article class="step rv rv-d1">
-        <p class="step-num" aria-hidden="true">02</p>
-        <h3>AI scrie, omul rafinează</h3>
-        <p>Folosim AI pentru viteză și variante, apoi un copywriter senior șlefuiește fiecare frază până sună uman și vinde.</p>
+
+      <article class="tl-step rv">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-card">
+          <button class="tl-head" aria-expanded="false">
+            <span class="tl-num" aria-hidden="true">02</span>
+            <span class="tl-titles"><h3>Brief &amp; Research</h3><span class="tl-meta">Zilele 1–3</span></span>
+            <span class="tl-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="tl-body"><div class="tl-body-in">
+            <p>Săpăm adânc în afacerea ta: piață, competiție, clienți, voce. Aici se câștigă sau se pierde un proiect — și de aceea nu sărim niciodată peste.</p>
+            <ul>
+              <li>Audit al materialelor și mesajelor existente</li>
+              <li>Research de piață și analiză a competitorilor</li>
+              <li>Chestionar scurt despre clienții tăi reali</li>
+              <li>Definim vocea brandului: cum suni tu, nu un robot</li>
+            </ul>
+          </div></div>
+        </div>
       </article>
-      <article class="step rv rv-d2">
-        <p class="step-num" aria-hidden="true">03</p>
-        <h3>Testează, măsoară, iterează</h3>
-        <p>Lansăm, urmărim datele și optimizăm. Copy-ul bun nu e o livrare unică — e un sistem care se îmbunătățește.</p>
+
+      <article class="tl-step rv">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-card">
+          <button class="tl-head" aria-expanded="false">
+            <span class="tl-num" aria-hidden="true">03</span>
+            <span class="tl-titles"><h3>Ofertă &amp; Plan</h3><span class="tl-meta">Zilele 3–5</span></span>
+            <span class="tl-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="tl-body"><div class="tl-body-in">
+            <p>Primești un plan concret: livrabile, termene și preț fix, agreat înainte de start. Fără surprize la factură, fără „depinde".</p>
+            <ul>
+              <li>Listă clară de livrabile — știi exact ce primești</li>
+              <li>Calendar cu termene reale, nu optimiste</li>
+              <li>Preț fix, stabilit înainte să începem lucrul</li>
+            </ul>
+          </div></div>
+        </div>
+      </article>
+
+      <article class="tl-step rv">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-card">
+          <button class="tl-head" aria-expanded="false">
+            <span class="tl-num" aria-hidden="true">04</span>
+            <span class="tl-titles"><h3>Creație: AI scrie, omul rafinează</h3><span class="tl-meta">Săptămânile 1–2</span></span>
+            <span class="tl-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="tl-body"><div class="tl-body-in">
+            <p>AI-ul generează viteza și variantele, copywriterul senior livrează calitatea. Vezi progresul pe parcurs — nu dispărem două săptămâni ca să reapărem cu un PDF.</p>
+            <ul>
+              <li>Draft-uri rapide și unghiuri multiple, generate cu AI</li>
+              <li>Rafinare umană frază cu frază, pe vocea brandului tău</li>
+              <li>Preview-uri pe parcurs, ca să nu existe surprize la final</li>
+            </ul>
+          </div></div>
+        </div>
+      </article>
+
+      <article class="tl-step rv">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-card">
+          <button class="tl-head" aria-expanded="false">
+            <span class="tl-num" aria-hidden="true">05</span>
+            <span class="tl-titles"><h3>Feedback &amp; Revizii</h3><span class="tl-meta">2 runde incluse</span></span>
+            <span class="tl-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="tl-body"><div class="tl-body-in">
+            <p>Lucrăm împreună până sună exact ca tine. Două runde de revizii sunt incluse în orice proiect — de obicei e nevoie de una singură.</p>
+            <ul>
+              <li>Comentezi direct pe document, noi răspundem în 24–48h</li>
+              <li>Revizuim pe baza feedback-ului tău, nu a orgoliului nostru</li>
+              <li>Aprobarea finală e mereu a ta</li>
+            </ul>
+          </div></div>
+        </div>
+      </article>
+
+      <article class="tl-step rv">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-card">
+          <button class="tl-head" aria-expanded="false">
+            <span class="tl-num" aria-hidden="true">06</span>
+            <span class="tl-titles"><h3>Lansare &amp; Optimizare</h3><span class="tl-meta">Continuu</span></span>
+            <span class="tl-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
+          </button>
+          <div class="tl-body"><div class="tl-body-in">
+            <p>Livrăm, lansăm, măsurăm. Copy-ul bun nu e o livrare unică — e un sistem care se îmbunătățește cu fiecare iterație.</p>
+            <ul>
+              <li>Implementare și publicare, gata de lansare</li>
+              <li>Monitorizăm rezultatele: deschideri, click-uri, conversii</li>
+              <li>Raport + recomandări concrete pentru următoarea iterație</li>
+            </ul>
+          </div></div>
+        </div>
       </article>
     </div>
   </div>
@@ -520,23 +779,28 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
       <div>
         <p class="eyebrow rv">02 — Contact</p>
         <h2 class="rv rv-d1">Hai să <span class="serif-i">vorbim.</span></h2>
-        <p class="lede rv rv-d2">Fie că ai un proiect în minte sau doar vrei să explorezi ce e posibil — inboxul meu e deschis. Răspund de obicei în aceeași zi.</p>
+        <p class="lede rv rv-d2">Răspunde la 6 întrebări scurte despre afacerea ta — sub un minut — și venim pregătiți la prima discuție, cu idei concrete. Răspundem de obicei în aceeași zi.</p>
       </div>
       <div class="rv rv-d2">
-        <p class="avail"><span class="pulse" aria-hidden="true"></span>Disponibil pentru proiecte noi</p>
-        <div class="contact-actions">
-          <a class="contact-line" href="mailto:amorosanu72@gmail.com">
+        <div class="chat" id="chat">
+          <div class="chat-head">
+            <span class="chat-ava" aria-hidden="true">CS</span>
+            <span class="chat-id"><b>CopyStack</b><span><i class="pulse" aria-hidden="true"></i>online — răspundem azi</span></span>
+          </div>
+          <div class="chat-prog" aria-hidden="true"><i id="chat-prog"></i></div>
+          <div class="chat-body" id="chat-body" aria-live="polite"></div>
+        </div>
+        <div class="contact-direct">
+          <a href="mailto:amorosanu72@gmail.com">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>
-            <b>amorosanu72@gmail.com</b>
-            <span>Email</span>
+            amorosanu72@gmail.com
           </a>
-          <a class="contact-line wa" href="https://wa.me/40741672024" target="_blank" rel="noopener">
+          <a href="https://wa.me/40741672024" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 01-12.4 7.5L3 21l2-5.4A8.5 8.5 0 1121 11.5z"/></svg>
-            <b>+40 741 672 024</b>
-            <span>WhatsApp</span>
+            +40 741 672 024
           </a>
         </div>
-        <p class="contact-note">București, România · Remote în întreaga lume · Preferat: Email &amp; WhatsApp</p>
+        <p class="contact-note">București, România · Remote în întreaga lume</p>
       </div>
     </div>
   </div>
@@ -664,6 +928,139 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
         o.style.transform = "translate(" + x * f + "px," + y * f + "px)";
       });
     }, {passive:true});
+  }
+
+  /* Proces: scroll-driven timeline fill + active steps + accordion */
+  var tl = document.getElementById("timeline");
+  if (tl){
+    var tlFill = tl.querySelector(".tl-fill"), tlSteps = tl.querySelectorAll(".tl-step"), tlTick = false;
+    function tlScroll(){
+      if (tlTick) return; tlTick = true;
+      requestAnimationFrame(function(){
+        var r = tl.getBoundingClientRect(), mid = innerHeight * .55;
+        tlFill.style.height = Math.min(Math.max(mid - r.top - 14, 0), r.height - 28) + "px";
+        tlSteps.forEach(function(s){
+          s.classList.toggle("active", s.getBoundingClientRect().top < mid);
+        });
+        tlTick = false;
+      });
+    }
+    addEventListener("scroll", tlScroll, {passive:true}); tlScroll();
+    tlSteps.forEach(function(s){
+      var head = s.querySelector(".tl-head");
+      head.addEventListener("click", function(){
+        var wasOpen = s.classList.contains("open");
+        tlSteps.forEach(function(o){
+          o.classList.remove("open");
+          o.querySelector(".tl-head").setAttribute("aria-expanded","false");
+        });
+        if (!wasOpen){ s.classList.add("open"); head.setAttribute("aria-expanded","true"); }
+      });
+    });
+    tlSteps[0].classList.add("open");
+    tlSteps[0].querySelector(".tl-head").setAttribute("aria-expanded","true");
+  }
+
+  /* Contact: WhatsApp qualifier wizard */
+  var chatBody = document.getElementById("chat-body"), chatProg = document.getElementById("chat-prog");
+  if (chatBody){
+    var QS = [
+      {key:"Afacere",      q:"Cum se numește afacerea ta și ce vinde?", type:"text", ph:"ex: Atelier Verde — mobilier la comandă"},
+      {key:"Client ideal", q:"Cine este clientul tău ideal?", type:"text", ph:"ex: proprietari de apartamente noi, 28–45 ani"},
+      {key:"Are nevoie de",q:"De ce ai nevoie acum?", type:"chips", multi:true, opts:["Email marketing","Copy pentru reclame","Site nou","Funnel de vânzare","Strategie completă","SEO & conținut","Nu știu încă"]},
+      {key:"Obiectiv",     q:"Care e obiectivul principal în următoarele 3 luni?", type:"chips", opts:["Mai multe vânzări","Mai multe lead-uri","Notorietate de brand","Lansare produs nou"]},
+      {key:"Buget lunar",  q:"Buget lunar orientativ pentru marketing?", type:"chips", opts:["Sub €500","€500–1.500","€1.500–5.000","Peste €5.000"]},
+      {key:"Nume",         q:"Și ultima: cum te numești?", type:"text", ph:"Numele tău"}
+    ];
+    var answers = {}, qi = -1;
+
+    function esc(s){ var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+    function setProg(){ chatProg.style.width = (qi < 0 ? 0 : Math.min((qi / QS.length) * 100, 100)) + "%"; }
+
+    function renderIntro(){
+      qi = -1; answers = {}; setProg();
+      chatBody.innerHTML =
+        '<div class="bub bot">Salut! 👋 Spune-ne câteva lucruri despre afacerea ta — durează sub un minut — și venim pregătiți la prima discuție.</div>' +
+        '<div class="chat-start"><button class="btn btn-primary" id="chat-go">Începe conversația' +
+        '<svg class="arr" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>' +
+        '<span style="font-size:.82rem;color:var(--fg-faint)">6 întrebări scurte · fără date de card, fără spam</span></div>';
+      document.getElementById("chat-go").addEventListener("click", function(){ qi = 0; renderQ(); });
+    }
+
+    function renderQ(){
+      setProg();
+      if (qi >= QS.length){ return renderFinal(); }
+      var s = QS[qi], h =
+        '<div class="bub bot"><span class="q-count">Întrebarea ' + (qi+1) + ' / ' + QS.length + '</span>' + esc(s.q) + '</div>';
+      if (s.type === "text"){
+        h += '<div class="chat-inrow"><input class="chat-input" id="chat-in" type="text" placeholder="' + esc(s.ph) + '" autocomplete="off"></div>';
+      } else {
+        h += '<div class="chat-chips" role="group" aria-label="Opțiuni">' + s.opts.map(function(o){
+          var on = s.multi ? (answers[s.key]||[]).indexOf(o) > -1 : answers[s.key] === o;
+          return '<button class="chip' + (on ? " on" : "") + '" data-v="' + esc(o) + '">' + esc(o) + '</button>';
+        }).join("") + '</div>';
+      }
+      h += '<div class="chat-nav">' +
+           '<button class="chat-back" id="chat-back">&larr; Înapoi</button>' +
+           '<button class="btn btn-primary btn-sm chat-next" id="chat-next" disabled>Următoarea &rarr;</button></div>';
+      chatBody.innerHTML = h;
+
+      var next = document.getElementById("chat-next");
+      function validate(){
+        var v = answers[QS[qi].key];
+        next.disabled = !(s.multi ? (v && v.length) : (v && String(v).trim()));
+      }
+      if (s.type === "text"){
+        var inp = document.getElementById("chat-in");
+        inp.value = answers[s.key] || "";
+        inp.addEventListener("input", function(){ answers[s.key] = inp.value; validate(); });
+        inp.addEventListener("keydown", function(e){ if (e.key === "Enter" && !next.disabled) go(1); });
+        setTimeout(function(){ inp.focus({preventScroll:true}); }, 50);
+      } else {
+        chatBody.querySelectorAll(".chip").forEach(function(c){
+          c.addEventListener("click", function(){
+            var v = c.dataset.v;
+            if (s.multi){
+              var arr = answers[s.key] || [];
+              var ix = arr.indexOf(v);
+              ix > -1 ? arr.splice(ix,1) : arr.push(v);
+              answers[s.key] = arr;
+              c.classList.toggle("on");
+            } else {
+              answers[s.key] = v;
+              chatBody.querySelectorAll(".chip").forEach(function(o){ o.classList.toggle("on", o === c); });
+            }
+            validate();
+          });
+        });
+      }
+      validate();
+      function go(d){ qi += d; qi < 0 ? renderIntro() : renderQ(); }
+      document.getElementById("chat-back").addEventListener("click", function(){ go(-1); });
+      next.addEventListener("click", function(){ go(1); });
+    }
+
+    function renderFinal(){
+      chatProg.style.width = "100%";
+      var lines = QS.map(function(s){
+        var v = answers[s.key];
+        return "• " + s.key + ": " + (s.multi ? (v||[]).join(", ") : (v||"—"));
+      });
+      var msg = "Salut! Vin de pe site-ul CopyStack 👋\n\n" + lines.join("\n") + "\n\nCând putem programa apelul de descoperire?";
+      var name = esc(answers["Nume"] || "");
+      chatBody.innerHTML =
+        '<div class="bub bot">Mulțumim' + (name ? ", <b>" + name + "</b>" : "") + '! Răspunsurile tale sunt gata de trimis — alege canalul preferat și revenim în aceeași zi cu primele idei.</div>' +
+        '<div class="bub me" style="white-space:pre-line">' + esc(lines.join("\n")) + '</div>' +
+        '<div class="chat-final">' +
+        '<a class="btn btn-wa" href="https://wa.me/40741672024?text=' + encodeURIComponent(msg) + '" target="_blank" rel="noopener">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 01-12.4 7.5L3 21l2-5.4A8.5 8.5 0 1121 11.5z"/></svg>' +
+        'Trimite pe WhatsApp</a>' +
+        '<a class="btn btn-ghost" href="mailto:amorosanu72@gmail.com?subject=' + encodeURIComponent("Proiect nou — " + (answers["Afacere"]||"")) + '&body=' + encodeURIComponent(msg) + '">Trimite pe Email</a>' +
+        '<button class="chat-back" id="chat-redo" style="justify-content:center">&#8634; Reia de la început</button></div>';
+      document.getElementById("chat-redo").addEventListener("click", renderIntro);
+    }
+
+    renderIntro();
   }
 
   /* Magnetic primary CTA */
