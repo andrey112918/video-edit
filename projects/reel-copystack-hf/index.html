@@ -6,26 +6,31 @@
 <style>
   :root{
     --ink:#0d0c0a; --ink2:#14120e; --fg:#f4efe6; --mut:#a59e90; --faint:#6e685c;
-    --amber:#f5a623; --amber2:#ffc14d; --red:#f87171; --green:#4ade80; --line:#2e2b24;
+    --amber:#f5a623; --amber2:#ffc14d; --gold:#c9a96a; --red:#f87171; --line:#2e2b24;
+    --paper:#f6f2ea; --paper2:#fffdf8; --inkblk:#171512;
   }
-  body{
-    margin:0; width:1080px; height:1920px; overflow:hidden; background:var(--ink);
-    font-family:"Inter", sans-serif; color:var(--fg);
-  }
+  body{margin:0; width:1080px; height:1920px; overflow:hidden; background:var(--ink);
+    font-family:"Inter", sans-serif; color:var(--fg)}
   .scene{position:absolute; top:0; left:0; width:1080px; height:1920px; overflow:hidden; background:var(--ink)}
-  #s1{z-index:1}
-  #s2,#s3,#s4,#s5,#s6,#s7{opacity:0}
-  #s2{z-index:2}#s3{z-index:3}#s4{z-index:4}#s5{z-index:5}#s6{z-index:6}#s7{z-index:7}
+  .scene.light{background:var(--paper); color:var(--inkblk)}
+  #sc1{z-index:1}
+  .scene:not(#sc1){opacity:0}
+  #sc2{z-index:2}#sc3{z-index:3}#sc4{z-index:4}#sc5{z-index:5}#sc6{z-index:6}#sc7{z-index:7}
+  #sc8{z-index:8}#sc9{z-index:9}#sc10{z-index:10}#sc11{z-index:11}#sc12{z-index:12}
+  #sc13{z-index:13}#sc14{z-index:14}#sc15{z-index:15}
+  #flash{position:absolute; inset:0; background:#fff; opacity:0; z-index:90; pointer-events:none}
 
-  /* shared decorative layers */
   .glow{position:absolute; width:1400px; height:1400px; border-radius:50%;
     background:radial-gradient(circle, rgba(245,166,35,.22), transparent 65%); filter:blur(60px)}
   .grid{position:absolute; inset:0;
     background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
     background-size:90px 90px}
+  .light .grid{background-image:linear-gradient(rgba(23,21,18,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23,21,18,.05) 1px, transparent 1px)}
   .ghost{position:absolute; font-family:"Playfair Display", serif; font-weight:900;
     color:rgba(244,239,230,.05); white-space:nowrap; line-height:1}
+  .light .ghost{color:rgba(23,21,18,.05)}
   .mono{font-family:"JetBrains Mono", monospace; letter-spacing:.3em; text-transform:uppercase;
     color:var(--amber); font-size:26px}
   .rule{height:3px; background:linear-gradient(90deg, var(--amber), transparent); transform-origin:left center}
@@ -33,268 +38,382 @@
   .wm{position:absolute; top:54px; left:56px; font-family:"Playfair Display", serif;
     font-weight:900; font-size:40px; z-index:50}
   .wm em{color:var(--amber); font-style:normal}
-  .corner{position:absolute; font-family:"JetBrains Mono", monospace; font-size:20px;
-    letter-spacing:.22em; color:var(--mut); text-transform:uppercase}
+  .corner{position:absolute; top:64px; right:56px; font-family:"JetBrains Mono", monospace;
+    font-size:20px; letter-spacing:.22em; color:var(--mut); text-transform:uppercase}
+  .light .corner{color:#8a8375}
 
-  /* caption pill */
-  .cap{position:absolute; left:50%; transform:translateX(-50%); bottom:330px; max-width:880px;
-    background:rgba(20,18,14,.92); border:2px solid var(--line); border-radius:30px;
-    padding:26px 42px; font-size:38px; line-height:1.45; text-align:center; z-index:40; opacity:0}
-
-  /* scene content containers */
   .content{width:100%; height:100%; padding:200px 90px; box-sizing:border-box;
-    display:flex; flex-direction:column; gap:36px}
+    display:flex; flex-direction:column; justify-content:center; gap:40px}
 
-  /* S1 hook */
-  #s1 .content{justify-content:center; gap:44px}
-  .hook-line{font-family:"Playfair Display", serif; font-weight:900; font-size:96px; line-height:1.06}
-  .hook-line.q{color:var(--fg)}
-  .hook-line.a{color:var(--mut); font-size:84px}
-  .hook-line.punch{color:var(--amber); font-size:100px}
-  .hook-banner{align-self:flex-start; background:var(--amber); color:var(--ink);
-    font-weight:700; font-size:38px; padding:20px 36px; border-radius:16px; letter-spacing:.02em}
+  .cap{position:absolute; left:50%; transform:translateX(-50%); bottom:300px; max-width:880px;
+    background:rgba(20,18,14,.92); border:2px solid var(--line); border-radius:30px;
+    padding:24px 40px; font-size:36px; line-height:1.45; text-align:center; z-index:40; opacity:0; color:var(--fg)}
 
-  /* S2 truth */
-  #s2 .content{justify-content:center; gap:40px}
-  .truth-head{font-size:84px; line-height:1.08}
-  .truth-head .dim{color:var(--mut)}
-  .xrow{display:flex; align-items:center; gap:28px; background:rgba(248,113,113,.07);
-    border:2px solid rgba(248,113,113,.35); border-radius:22px; padding:30px 36px}
-  .xrow .x{color:var(--red); font-size:52px; font-weight:700; font-family:"Inter",sans-serif}
+  /* pop-up stamps */
+  .stamp{position:absolute; z-index:45; font-family:"JetBrains Mono",monospace; font-weight:700;
+    background:var(--amber); color:var(--ink); padding:16px 30px; border-radius:14px;
+    font-size:30px; letter-spacing:.06em; box-shadow:0 14px 40px rgba(0,0,0,.45); opacity:0}
+  .stamp.dark{background:var(--ink2); color:var(--amber2); border:2px solid var(--amber)}
+
+  /* big kinetic type */
+  .kine{font-family:"Playfair Display",serif; font-weight:900; font-size:120px; line-height:1.05}
+  .kine .am{color:var(--amber)}
+  .kine .mu{color:var(--mut)}
+
+  /* SC4 AI chip */
+  .chipwrap{position:relative; width:100%; height:760px}
+  .aichip{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:300px; height:300px; border-radius:46px; background:linear-gradient(160deg,#1d1a14,#0d0c0a);
+    border:3px solid var(--amber); box-shadow:0 0 110px rgba(245,166,35,.4);
+    display:grid; place-items:center; font-family:"Playfair Display",serif; font-weight:900;
+    font-size:110px; color:var(--amber)}
+  .ailbl{position:absolute; background:rgba(20,18,14,.95); border:2px solid var(--line);
+    border-radius:16px; padding:18px 30px; font-family:"JetBrains Mono",monospace;
+    font-size:28px; letter-spacing:.14em; color:var(--fg)}
+
+  /* SC5 x rows */
+  .xrow{display:flex; align-items:center; gap:28px; background:rgba(248,113,113,.08);
+    border:2px solid rgba(248,113,113,.4); border-radius:22px; padding:28px 36px}
+  .xrow .x{color:var(--red); font-size:50px; font-weight:700}
   .xrow .t{font-size:40px; font-weight:600}
 
-  /* browser frame (S3, S4, S7) */
-  .browser{width:900px; margin:0 auto; background:var(--ink2); border:2px solid var(--line);
-    border-radius:26px; overflow:hidden; box-shadow:0 40px 90px rgba(0,0,0,.6)}
-  .bbar{display:flex; align-items:center; gap:12px; padding:20px 26px; border-bottom:2px solid var(--line)}
-  .bdot{width:16px; height:16px; border-radius:50%; background:var(--faint)}
-  .bdot.a{background:var(--amber)}
-  .burl{margin:0 auto; background:var(--ink); border-radius:12px; padding:8px 26px;
-    font-family:"JetBrains Mono",monospace; font-size:22px; color:var(--mut)}
-  .bview{position:relative; overflow:hidden}
+  /* SC6 breakdown */
+  .bdhead{font-family:"Playfair Display",serif; font-weight:900; font-size:104px; line-height:1.1}
+  .bdhead .am{color:var(--amber)}
+  .bdsub{font-size:48px; font-weight:600; color:var(--mut); line-height:1.35}
 
-  /* S3 site hero mock */
-  .site{padding:60px 56px; display:flex; flex-direction:column; gap:30px}
-  .site .nav{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px}
-  .site .nav .logo{font-family:"Playfair Display",serif; font-weight:900; font-size:34px}
-  .site .nav .cta{background:var(--amber); color:var(--ink); border-radius:40px; padding:12px 28px;
-    font-weight:700; font-size:24px}
-  .site .eyebrow{font-family:"JetBrains Mono",monospace; font-size:22px; letter-spacing:.3em; color:var(--amber)}
-  .site h1{font-family:"Playfair Display",serif; font-weight:900; font-size:84px; line-height:1.04; margin:0}
-  .site h1 em{color:var(--amber); font-style:italic}
-  .site .sub{font-size:30px; color:var(--mut); max-width:640px; line-height:1.5}
-  .site .btns{display:flex; gap:20px}
-  .site .b1{background:var(--amber); color:var(--ink); font-weight:700; font-size:28px;
-    border-radius:44px; padding:20px 40px}
-  .site .b2{border:2px solid var(--faint); font-size:28px; border-radius:44px; padding:20px 40px}
-  .site .proof{color:var(--faint); font-size:24px}
-  .site .proof b{color:var(--amber)}
+  /* SC7 laptop */
+  .laptop{width:880px; margin:0 auto; position:relative}
+  .lscreen{background:#0a0908; border:4px solid #2c2922; border-bottom:none;
+    border-radius:30px 30px 0 0; padding:26px; height:560px; box-sizing:border-box}
+  .lview{background:linear-gradient(165deg,#16130e,#0c0b09); border-radius:14px; height:100%;
+    display:flex; flex-direction:column; justify-content:center; align-items:center; gap:34px; text-align:center; padding:0 50px; box-sizing:border-box}
+  .lview h2{font-family:"Playfair Display",serif; font-weight:900; font-size:62px; line-height:1.15; margin:0}
+  .lview h2 em{color:var(--amber); font-style:italic}
+  .lbtn{background:var(--gold); color:var(--ink); font-weight:700; font-size:28px;
+    letter-spacing:.08em; padding:18px 44px; border-radius:10px; text-transform:uppercase}
+  .lbase{height:34px; background:linear-gradient(#3a362e,#23201a); border-radius:0 0 34px 34px;
+    margin:0 -60px; box-shadow:0 30px 60px rgba(0,0,0,.6)}
 
-  /* S4 proces */
-  .steps{padding:50px 50px; display:flex; flex-direction:column; gap:26px}
-  .steps h2{font-family:"Playfair Display",serif; font-weight:900; font-size:58px; margin:0 0 6px}
-  .step{display:flex; align-items:center; gap:28px; background:rgba(255,255,255,.04);
-    border:2px solid var(--line); border-radius:22px; padding:26px 32px}
-  .step .num{font-family:"Playfair Display",serif; font-weight:900; font-size:54px; color:var(--amber); width:86px}
-  .step .tt{font-family:"Playfair Display",serif; font-weight:700; font-size:38px}
-  .step .meta{font-family:"JetBrains Mono",monospace; font-size:20px; color:var(--mut);
-    letter-spacing:.18em; text-transform:uppercase; margin-top:6px}
-  .rail{position:absolute; left:78px; top:170px; bottom:60px; width:4px; background:var(--line)}
-  .railfill{position:absolute; left:78px; top:170px; width:4px; height:0; background:var(--amber);
-    box-shadow:0 0 18px rgba(245,166,35,.7)}
+  /* SC8 process icons */
+  .ptitle{font-family:"Playfair Display",serif; font-weight:900; font-size:86px; text-align:center}
+  .procrow{display:flex; justify-content:center; gap:46px; align-items:flex-start}
+  .pstep{display:flex; flex-direction:column; align-items:center; gap:20px; width:210px; text-align:center}
+  .pico{width:150px; height:150px; border-radius:50%; background:var(--gold);
+    display:grid; place-items:center; box-shadow:0 16px 40px rgba(201,169,106,.35)}
+  .pico svg{width:64px; height:64px; stroke:var(--inkblk); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+  .pname{font-family:"JetBrains Mono",monospace; font-size:24px; letter-spacing:.14em; font-weight:700}
+  .psub{font-size:21px; color:#6b6459; line-height:1.35}
+  .parrow{font-size:48px; color:var(--gold); margin-top:50px; font-weight:700}
 
-  /* S5 services */
-  #s5 .content{justify-content:center; gap:28px; padding:230px 90px}
+  /* SC9 notebook */
+  .notebook{width:760px; margin:0 auto; background:var(--paper2); border-radius:26px;
+    padding:70px 80px; box-sizing:border-box; box-shadow:0 40px 90px rgba(0,0,0,.18);
+    transform:rotate(-2deg); border:2px solid #e8e2d6}
+  .notebook .nb-title{font-family:"Playfair Display",serif; font-weight:900; font-size:54px;
+    color:var(--inkblk); margin-bottom:34px}
+  .nbitem{display:flex; align-items:center; gap:26px; padding:17px 0;
+    border-bottom:2px solid #eee7da; font-family:"Playfair Display",serif; font-style:italic;
+    font-size:44px; color:#2c2820}
+  .nbitem .chk{width:46px; height:46px; border-radius:12px; border:3px solid var(--gold);
+    display:grid; place-items:center; color:var(--gold); font-size:34px; font-weight:700; font-style:normal; flex:none}
+
+  /* SC10 steps quick */
+  .qstep{display:flex; align-items:center; gap:28px; background:rgba(255,255,255,.045);
+    border:2px solid var(--line); border-radius:22px; padding:24px 34px}
+  .qstep .n{font-family:"Playfair Display",serif; font-weight:900; font-size:48px; color:var(--amber); width:80px}
+  .qstep .t{font-family:"Playfair Display",serif; font-weight:700; font-size:40px}
+  .qstep .m{font-family:"JetBrains Mono",monospace; font-size:20px; color:var(--mut);
+    letter-spacing:.16em; text-transform:uppercase; margin-top:4px}
+
+  /* SC11 services */
   .svc{display:flex; align-items:center; gap:30px; background:var(--ink2);
-    border:3px solid var(--amber); border-radius:26px; padding:30px 38px}
-  .svc .n{font-family:"Playfair Display",serif; font-weight:900; font-size:50px; color:var(--amber); width:80px}
-  .svc .tt{font-family:"Playfair Display",serif; font-weight:700; font-size:42px; line-height:1.1}
-  .svc .ss{font-size:26px; color:var(--mut); margin-top:8px; line-height:1.35}
+    border:3px solid var(--amber); border-radius:24px; padding:26px 36px}
+  .svc .n{font-family:"Playfair Display",serif; font-weight:900; font-size:46px; color:var(--amber); width:76px}
+  .svc .tt{font-family:"Playfair Display",serif; font-weight:700; font-size:40px; line-height:1.1}
+  .svc .ss{font-size:25px; color:var(--mut); margin-top:6px; line-height:1.3}
 
-  /* S6 difference */
-  #s6 .content{justify-content:center; gap:60px}
-  .diff-a{font-family:"Playfair Display",serif; font-weight:900; font-size:92px; color:var(--faint); line-height:1.05}
-  .diff-b{font-family:"Playfair Display",serif; font-weight:900; font-size:96px; color:var(--amber); line-height:1.08}
-  .diff-cmp{display:flex; flex-direction:column; gap:24px}
-  .cmp-row{display:flex; align-items:baseline; gap:26px; font-size:44px; font-weight:600}
-  .cmp-row .k{font-family:"JetBrains Mono",monospace; font-size:30px; color:var(--faint);
-    letter-spacing:.2em; width:120px}
+  /* SC12 stats light */
+  .statrow{display:flex; gap:30px; justify-content:center}
+  .statcard{flex:1; max-width:300px; border:3px solid var(--inkblk); border-radius:24px;
+    padding:40px 24px; text-align:center; background:var(--paper2)}
+  .statcard .v{font-family:"Playfair Display",serif; font-weight:900; font-size:74px; color:var(--inkblk)}
+  .statcard .l{font-family:"JetBrains Mono",monospace; font-size:20px; letter-spacing:.1em;
+    text-transform:uppercase; color:#8a8375; margin-top:12px}
+  .statcard .ic{width:74px; height:74px; border-radius:50%; border:3px solid var(--gold);
+    margin:0 auto 22px; display:grid; place-items:center}
+  .statcard .ic svg{width:36px; height:36px; stroke:var(--gold); fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
+  .statnote{text-align:center; font-family:"JetBrains Mono",monospace; font-size:24px;
+    letter-spacing:.2em; color:#8a8375; text-transform:uppercase}
 
-  /* S7 CTA */
-  #s7 .content{justify-content:center; align-items:center; gap:40px; padding:150px 90px; text-align:center}
-  .cta-head{font-family:"Playfair Display",serif; font-weight:900; font-size:108px; line-height:1.04}
+  /* SC13 difference */
+  .diff-a{font-family:"Playfair Display",serif; font-weight:900; font-size:96px; color:var(--faint); line-height:1.05}
+  .diff-b{font-family:"Playfair Display",serif; font-weight:900; font-size:100px; color:var(--amber); line-height:1.08}
+
+  /* SC14 target light */
+  .target{position:relative; width:430px; height:430px; margin:0 auto}
+  .tring{position:absolute; border-radius:50%; border:14px solid var(--inkblk)}
+  .tr1{inset:0}.tr2{inset:70px}.tr3{inset:140px}
+  .tcore{position:absolute; inset:196px; border-radius:50%; background:var(--gold)}
+  .msg-h{font-family:"Playfair Display",serif; font-weight:900; font-size:84px; line-height:1.12; text-align:center}
+  .msg-h .am{color:var(--gold)}
+
+  /* SC15 CTA */
+  .cta-head{font-family:"Playfair Display",serif; font-weight:900; font-size:116px; line-height:1.04; text-align:center}
   .cta-head em{color:var(--amber); font-style:italic}
   .cta-pill{background:var(--amber); color:var(--ink); font-weight:700; font-size:46px;
-    border-radius:60px; padding:30px 64px; box-shadow:0 0 80px rgba(245,166,35,.45)}
-  .cta-url{font-family:"JetBrains Mono",monospace; font-size:38px; color:var(--amber2); letter-spacing:.04em}
-  .cta-sub{font-size:34px; color:var(--mut); max-width:760px; line-height:1.5}
+    border-radius:60px; padding:30px 64px; box-shadow:0 0 80px rgba(245,166,35,.45); align-self:center}
+  .cta-url{font-family:"JetBrains Mono",monospace; font-size:38px; color:var(--amber2);
+    letter-spacing:.04em; text-align:center}
+  .cta-sub{font-size:34px; color:var(--mut); max-width:760px; line-height:1.5; text-align:center; align-self:center}
 </style>
 </head>
 <body>
 <div id="root" data-composition-id="main" data-width="1080" data-height="1920" data-start="0" data-duration="62">
 
-  <!-- ============ AUDIO (SFX only — add "Back Home" in-app when posting) ============ -->
-  <audio id="a-imp1" data-start="0.2" data-duration="2.1" data-track-index="21" src="audio/impact-bass-1.mp3" data-volume="0.85"></audio>
-  <audio id="a-imp2" data-start="2.4" data-duration="2.6" data-track-index="21" src="audio/impact-bass-2.mp3" data-volume="0.95"></audio>
-  <audio id="a-wh1" data-start="4.4" data-duration="0.6" data-track-index="22" src="audio/whoosh.mp3" data-volume="0.75"></audio>
-  <audio id="a-wh2" data-start="11.9" data-duration="0.6" data-track-index="22" src="audio/whoosh.mp3" data-volume="0.75"></audio>
-  <audio id="a-wh3" data-start="21.9" data-duration="0.6" data-track-index="22" src="audio/whoosh-short.mp3" data-volume="0.75"></audio>
-  <audio id="a-wh4" data-start="33.9" data-duration="0.6" data-track-index="22" src="audio/whoosh.mp3" data-volume="0.75"></audio>
-  <audio id="a-wh5" data-start="45.8" data-duration="0.6" data-track-index="22" src="audio/whoosh-short.mp3" data-volume="0.75"></audio>
-  <audio id="a-pop1" data-start="34.7" data-duration="0.75" data-track-index="23" src="audio/pop.mp3" data-volume="0.65"></audio>
-  <audio id="a-pop2" data-start="36.5" data-duration="0.75" data-track-index="23" src="audio/pop.mp3" data-volume="0.65"></audio>
-  <audio id="a-pop3" data-start="38.3" data-duration="0.75" data-track-index="23" src="audio/pop.mp3" data-volume="0.65"></audio>
-  <audio id="a-pop4" data-start="40.1" data-duration="0.75" data-track-index="23" src="audio/pop.mp3" data-volume="0.65"></audio>
-  <audio id="a-pop5" data-start="41.9" data-duration="0.75" data-track-index="23" src="audio/pop.mp3" data-volume="0.65"></audio>
-  <audio id="a-pop6" data-start="43.7" data-duration="0.75" data-track-index="23" src="audio/pop.mp3" data-volume="0.65"></audio>
-  <audio id="a-imp3" data-start="46.3" data-duration="2.2" data-track-index="21" src="audio/impact-bass-1.mp3" data-volume="0.9"></audio>
-  <audio id="a-riser" data-start="51.2" data-media-start="6.0" data-duration="4.0" data-track-index="24" src="audio/riser.mp3" data-volume="0.7"></audio>
-  <audio id="a-chime" data-start="56.2" data-duration="2.5" data-track-index="21" src="audio/chime.mp3" data-volume="0.75"></audio>
-  <audio id="a-spark" data-start="60.0" data-duration="1.8" data-track-index="23" src="audio/sparkle.mp3" data-volume="0.65"></audio>
+  <!-- AUDIO: Back Home (user-provided), trimmed from 0.15s, faded -->
+  <audio id="a-song" data-start="0" data-duration="62" data-track-index="20" src="audio/song62.m4a" data-volume="1"></audio>
+  <audio id="a-wh-drop" data-start="16.05" data-duration="0.6" data-track-index="22" src="audio/whoosh.mp3" data-volume="0.45"></audio>
+  <audio id="a-pop1" data-start="25.27" data-duration="0.5" data-track-index="23" src="audio/pop.mp3" data-volume="0.3" ></audio>
+  <audio id="a-pop2" data-start="25.81" data-duration="0.5" data-track-index="23" src="audio/pop.mp3" data-volume="0.3" ></audio>
+  <audio id="a-pop3" data-start="26.34" data-duration="0.5" data-track-index="23" src="audio/pop.mp3" data-volume="0.3" ></audio>
+  <audio id="a-pop4" data-start="26.88" data-duration="0.5" data-track-index="23" src="audio/pop.mp3" data-volume="0.3" ></audio>
+  <audio id="a-pop5" data-start="27.41" data-duration="0.5" data-track-index="23" src="audio/pop.mp3" data-volume="0.3" ></audio>
+  <audio id="a-pop6" data-start="27.95" data-duration="0.5" data-track-index="23" src="audio/pop.mp3" data-volume="0.3" ></audio>
 
+  <div id="flash"></div>
 
-  <!-- ============ S1 HOOK 0–6.5 ============ -->
-  <div id="s1" class="scene">
+  <!-- SC1 0–2.30 hook Q -->
+  <div id="sc1" class="scene">
     <div class="glow" data-layout-ignore style="top:-450px; right:-400px"></div>
     <div class="grid"></div>
-    <div class="ghost" data-layout-ignore style="font-size:430px; bottom:-90px; left:-60px">CS</div>
-    <div class="wm">Copy<em>Stack</em></div>
-    <div class="corner" style="top:64px; right:56px">Reel · 2026</div>
+    <div class="ghost" data-layout-ignore style="font-size:420px; bottom:-80px; left:-50px">CS</div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">Reel · 2026</div>
     <div class="content">
-      <div class="mono" id="s1-eyebrow">Întrebare onestă</div>
-      <div class="hook-line q" id="s1-l1">Nu primești mesaje sau vânzări?</div>
-      <div class="hook-line a" id="s1-l2">Problema nu e produsul tău…</div>
-      <div class="hook-line punch" id="s1-l3">ci modul în care îl prezinți.</div>
-      <div class="rule" id="s1-rule" style="width:420px"></div>
-      <div class="hook-banner" id="s1-banner">Marketingul nu înseamnă doar reclame.</div>
+      <div class="mono" id="s1-eb">Întrebare onestă</div>
+      <div class="kine" id="s1-t">Nu primești <span class="am">mesaje</span> sau <span class="am">vânzări?</span></div>
     </div>
+    <div class="stamp dark" id="st-q" style="right:140px; top:560px">?</div>
   </div>
 
-  <!-- ============ S2 TRUTH 6.5–18.5 ============ -->
-  <div id="s2" class="scene">
-    <div class="glow" data-layout-ignore style="top:30%; left:-600px; background:radial-gradient(circle, rgba(248,113,113,.14), transparent 65%)"></div>
+  <!-- SC2 2.30–4.44 hook A -->
+  <div id="sc2" class="scene">
+    <div class="glow" data-layout-ignore style="top:30%; left:-600px"></div>
     <div class="grid"></div>
-    <div class="ghost" data-layout-ignore style="font-size:300px; top:-40px; right:-120px">AI</div>
-    <div class="wm">Copy<em>Stack</em></div>
-    <div class="corner" style="top:64px; right:56px">01 · Adevărul</div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">Reel · 2026</div>
     <div class="content">
-      <div class="mono" id="s2-eyebrow">Adevărul despre AI</div>
-      <div class="truth-head serif" id="s2-head">Toată lumea scrie texte cu AI, <span class="dim">în câteva secunde.</span></div>
-      <div class="rule" id="s2-rule" style="width:360px"></div>
-      <div class="xrow" id="s2-x1"><span class="x">✕</span><span class="t">AI nu îți cunoaște clienții</span></div>
-      <div class="xrow" id="s2-x2"><span class="x">✕</span><span class="t">AI nu îți înțelege afacerea</span></div>
-      <div class="xrow" id="s2-x3"><span class="x">✕</span><span class="t">AI nu știe de ce cumpără oamenii</span></div>
+      <div class="kine" id="s2-t"><span class="mu">Problema nu e</span> produsul tău…</div>
     </div>
   </div>
 
-  <!-- ============ S3 SITE HERO 18.5–35.5 ============ -->
-  <div id="s3" class="scene">
+  <!-- SC3 4.44–6.58 hook punch -->
+  <div id="sc3" class="scene">
     <div class="glow" data-layout-ignore style="top:-350px; left:50%; margin-left:-700px"></div>
     <div class="grid"></div>
-    <div class="wm">Copy<em>Stack</em></div>
-    <div class="corner" style="top:64px; right:56px">02 · Procesul</div>
-    <div style="position:absolute; top:200px; left:0; right:0">
-      <div class="browser" id="s3-browser">
-        <div class="bbar"><span class="bdot a"></span><span class="bdot"></span><span class="bdot"></span>
-          <span class="burl">copystack-9.polsia.app</span></div>
-        <div class="bview" style="height:1150px">
-          <div class="site" id="s3-site">
-            <div class="nav"><span class="logo">Copy<span style="color:var(--amber)">Stack</span></span>
-              <span class="cta">Încearcă Generatorul</span></div>
-            <div class="eyebrow">AI + MĂIESTRIE UMANĂ</div>
-            <h1>Cuvinte care chiar <em>funcționează.</em></h1>
-            <div class="sub">Campanii, reclame și site-uri care convertesc. Viteza AI, măiestrie umană.</div>
-            <div class="btns"><span class="b1">Încearcă Generatorul</span><span class="b2">Vezi serviciile</span></div>
-            <div class="proof"><b>★ 4.9</b> · copy livrat pentru e-commerce, SaaS și servicii</div>
-          </div>
-        </div>
+    <div class="ghost" data-layout-ignore style="font-size:330px; bottom:-60px; right:-80px">!</div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">Reel · 2026</div>
+    <div class="content">
+      <div class="kine" id="s3-t">ci <span class="am">modul în care îl prezinți.</span></div>
+      <div class="rule" id="s3-rule" style="width:420px"></div>
+    </div>
+    <div class="stamp" id="st-slop" style="left:110px; bottom:520px">FĂRĂ ȘABLOANE</div>
+  </div>
+
+  <!-- SC4 6.58–10.85 AI chip -->
+  <div id="sc4" class="scene">
+    <div class="glow" data-layout-ignore style="top:50%; left:50%; margin:-700px 0 0 -700px"></div>
+    <div class="grid"></div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">01 · AI</div>
+    <div class="content" style="gap:60px">
+      <div class="kine" id="s4-t" style="font-size:92px">Toată lumea scrie <span class="mu">texte cu AI.</span></div>
+      <div class="chipwrap">
+        <div class="aichip" id="s4-chip">AI</div>
+        <div class="ailbl" id="s4-l1" style="left:30px; top:60px">ANALIZĂ</div>
+        <div class="ailbl" id="s4-l2" style="right:40px; top:130px">COPY</div>
+        <div class="ailbl" id="s4-l3" style="left:0px; top:330px">STRATEGIE</div>
+        <div class="ailbl" id="s4-l4" style="right:0px; top:380px">PSIHOLOGIE</div>
+        <div class="ailbl" id="s4-l5" style="left:60px; bottom:60px">CERCETARE</div>
+        <div class="ailbl" id="s4-l6" style="right:70px; bottom:30px">REZULTATE</div>
       </div>
     </div>
+  </div>
+
+  <!-- SC5 10.85–12.99 x rows rapid -->
+  <div id="sc5" class="scene">
+    <div class="glow" data-layout-ignore style="top:30%; left:-600px; background:radial-gradient(circle, rgba(248,113,113,.16), transparent 65%)"></div>
+    <div class="grid"></div>
+    <div class="ghost" data-layout-ignore style="font-size:300px; top:-40px; right:-110px">AI</div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">Dar…</div>
+    <div class="content">
+      <div class="xrow" id="s5-x1"><span class="x">✕</span><span class="t">AI nu îți cunoaște clienții</span></div>
+      <div class="xrow" id="s5-x2"><span class="x">✕</span><span class="t">AI nu îți înțelege afacerea</span></div>
+      <div class="xrow" id="s5-x3"><span class="x">✕</span><span class="t">AI nu știe de ce cumpără oamenii</span></div>
+    </div>
+  </div>
+
+  <!-- SC6 12.99–16.19 breakdown (quiet before drop) -->
+  <div id="sc6" class="scene">
+    <div class="glow" data-layout-ignore id="s6-glow" style="top:50%; left:50%; margin:-700px 0 0 -700px; opacity:.5"></div>
+    <div class="wm">Copy<em>Stack</em></div>
+    <div class="content" style="gap:54px">
+      <div class="bdhead" id="s6-t1">AI mă ajută <span class="am">să fiu mai rapid.</span></div>
+      <div class="bdsub" id="s6-t2">Experiența mea te face mai profitabil.</div>
+    </div>
     <div class="cap" id="cap-1">Eu folosesc AI doar ca un instrument — ca să lucrez mai rapid.</div>
+  </div>
+
+  <!-- SC7 16.19–20.47 DROP laptop -->
+  <div id="sc7" class="scene">
+    <div class="glow" data-layout-ignore style="top:-380px; left:50%; margin-left:-700px"></div>
+    <div class="grid"></div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">02 · Site</div>
+    <div class="content" style="gap:52px">
+      <div class="mono" id="s7-eb">copystack-9.polsia.app</div>
+      <div class="laptop" id="s7-laptop">
+        <div class="lscreen"><div class="lview">
+          <h2>Transformăm vizitatorii în clienți prin <em>cuvinte care vând.</em></h2>
+          <div class="lbtn">Vezi serviciile</div>
+        </div></div>
+        <div class="lbase"></div>
+      </div>
+    </div>
+    <div class="stamp" id="st-ctr" style="right:90px; top:480px">+47% CTR</div>
+    <div class="stamp dark" id="st-star" style="left:100px; bottom:480px">★ 4.9 / 214 RECENZII</div>
+  </div>
+
+  <!-- SC8 20.47–24.74 process icons (light) -->
+  <div id="sc8" class="scene light">
+    <div class="grid"></div>
+    <div class="wm" style="color:var(--inkblk)">Copy<em>Stack</em></div><div class="corner">03 · Proces</div>
+    <div class="content" style="gap:80px">
+      <div class="ptitle" id="s8-t">Procesul <span style="color:var(--gold)">meu.</span></div>
+      <div class="procrow">
+        <div class="pstep" id="s8-p1"><div class="pico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+          <div class="pname">CERCETARE</div><div class="psub">Analizăm afacerea, piața și clienții tăi.</div></div>
+        <div class="parrow" id="s8-a1">→</div>
+        <div class="pstep" id="s8-p2"><div class="pico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
+          <div class="pname">STRATEGIE</div><div class="psub">Construim poziționarea care te diferențiază.</div></div>
+        <div class="parrow" id="s8-a2">→</div>
+        <div class="pstep" id="s8-p3"><div class="pico"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></div>
+          <div class="pname">COPYWRITING</div><div class="psub">Scriem mesaje clare, persuasive, relevante.</div></div>
+      </div>
+      <div class="procrow" style="margin-top:-26px">
+        <div class="pstep" id="s8-p4"><div class="pico"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+          <div class="pname">REZULTATE</div><div class="psub">Creăm conținut care aduce conversii.</div></div>
+      </div>
+    </div>
     <div class="cap" id="cap-2">Înainte să scriu un cuvânt: analizez afacerea, competiția și clientul ideal.</div>
+  </div>
+
+  <!-- SC9 24.74–29.01 notebook (light) -->
+  <div id="sc9" class="scene light">
+    <div class="grid"></div>
+    <div class="ghost" data-layout-ignore style="font-size:280px; bottom:-60px; right:-60px">✓</div>
+    <div class="wm" style="color:var(--inkblk)">Copy<em>Stack</em></div><div class="corner">Checklist</div>
+    <div class="content">
+      <div class="notebook" id="s9-nb">
+        <div class="nb-title">Fiecare proiect:</div>
+        <div class="nbitem" id="s9-i1"><span class="chk">✓</span>Research</div>
+        <div class="nbitem" id="s9-i2"><span class="chk">✓</span>Strategy</div>
+        <div class="nbitem" id="s9-i3"><span class="chk">✓</span>Copy</div>
+        <div class="nbitem" id="s9-i4"><span class="chk">✓</span>Design</div>
+        <div class="nbitem" id="s9-i5"><span class="chk">✓</span>Optimize</div>
+        <div class="nbitem" id="s9-i6" style="border-bottom:none"><span class="chk">✓</span>Results</div>
+      </div>
+    </div>
     <div class="cap" id="cap-3">Abia apoi construiesc mesajele care conving oamenii să cumpere.</div>
   </div>
 
-  <!-- ============ S4 PROCES 35.5–55.5 ============ -->
-  <div id="s4" class="scene">
+  <!-- SC10 29.01–33.29 steps quick (dark) -->
+  <div id="sc10" class="scene">
     <div class="glow" data-layout-ignore style="bottom:-500px; right:-450px"></div>
     <div class="grid"></div>
-    <div class="wm">Copy<em>Stack</em></div>
-    <div class="corner" style="top:64px; right:56px">03 · Pas cu pas</div>
-    <div style="position:absolute; top:190px; left:0; right:0">
-      <div class="browser">
-        <div class="bbar"><span class="bdot a"></span><span class="bdot"></span><span class="bdot"></span>
-          <span class="burl">copystack-9.polsia.app/#proces</span></div>
-        <div class="bview" style="height:1230px">
-          <div class="steps" id="s4-steps">
-            <div class="mono" style="font-size:20px">Cum funcționează</div>
-            <h2>Drumul tău, pas cu pas.</h2>
-            <div class="rail"></div><div class="railfill" id="s4-rail"></div>
-            <div class="step" id="s4-st1"><span class="num">01</span><span><span class="tt">Apel de descoperire</span><div class="meta">Gratuit · 20 min</div></span></div>
-            <div class="step" id="s4-st2"><span class="num">02</span><span><span class="tt">Brief &amp; Research</span><div class="meta">Zilele 1–3</div></span></div>
-            <div class="step" id="s4-st3"><span class="num">03</span><span><span class="tt">Ofertă &amp; Plan</span><div class="meta">Zilele 3–5</div></span></div>
-            <div class="step" id="s4-st4"><span class="num">04</span><span><span class="tt">AI scrie, omul rafinează</span><div class="meta">Săptămânile 1–2</div></span></div>
-            <div class="step" id="s4-st5"><span class="num">05</span><span><span class="tt">Feedback &amp; Revizii</span><div class="meta">2 runde incluse</div></span></div>
-            <div class="step" id="s4-st6"><span class="num">06</span><span><span class="tt">Lansare &amp; Optimizare</span><div class="meta">Continuu</div></span></div>
-          </div>
-        </div>
-      </div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">Pas cu pas</div>
+    <div class="content" style="gap:26px">
+      <div class="qstep" id="s10-1"><span class="n">01</span><span><div class="t">Apel de descoperire</div><div class="m">Gratuit · 20 min</div></span></div>
+      <div class="qstep" id="s10-2"><span class="n">02</span><span><div class="t">Brief &amp; Research</div><div class="m">Zilele 1–3</div></span></div>
+      <div class="qstep" id="s10-3"><span class="n">03</span><span><div class="t">Ofertă &amp; Plan</div><div class="m">Preț fix</div></span></div>
+      <div class="qstep" id="s10-4"><span class="n">04</span><span><div class="t">AI scrie, omul rafinează</div><div class="m">Săpt. 1–2</div></span></div>
+      <div class="qstep" id="s10-5"><span class="n">05</span><span><div class="t">Lansare &amp; Optimizare</div><div class="m">Continuu</div></span></div>
     </div>
+    <div class="stamp dark" id="st-free" style="right:100px; top:430px">GRATUIT · 20 MIN</div>
     <div class="cap" id="cap-4">Acesta este procesul prin care trece fiecare client.</div>
-    <div class="cap" id="cap-5">Pornim de la cercetare și strategie…</div>
-    <div class="cap" id="cap-6">Continuăm cu poziționarea afacerii…</div>
-    <div class="cap" id="cap-7">Și construim texte și reclame create pentru conversii.</div>
   </div>
 
-  <!-- ============ S5 SERVICII 55.5–75.5 ============ -->
-  <div id="s5" class="scene">
+  <!-- SC11 33.29–39.70 services (dark) -->
+  <div id="sc11" class="scene">
     <div class="glow" data-layout-ignore style="top:25%; right:-550px"></div>
     <div class="grid"></div>
-    <div class="ghost" data-layout-ignore style="font-size:240px; bottom:-50px; left:-40px">06</div>
-    <div class="wm">Copy<em>Stack</em></div>
-    <div class="corner" style="top:64px; right:56px">04 · Servicii</div>
-    <div class="mono" id="s5-eyebrow" style="position:absolute; top:160px; left:50%; transform:translateX(-50%)">Cu ce te pot ajuta</div>
-    <div class="content">
-      <div class="svc" id="s5-c1"><span class="n">01</span><span><div class="tt">Reclame Meta &amp; Google</div><div class="ss">hooks care opresc scroll-ul, cost pe client mai mic</div></span></div>
-      <div class="svc" id="s5-c2"><span class="n">02</span><span><div class="tt">Landing page-uri</div><div class="ss">transformă vizitatorii în clienți, nu doar în trafic</div></span></div>
-      <div class="svc" id="s5-c3"><span class="n">03</span><span><div class="tt">Email marketing</div><div class="ss">audiența ta, vânzări pe pilot automat</div></span></div>
-      <div class="svc" id="s5-c4"><span class="n">04</span><span><div class="tt">Copy pentru website</div><div class="ss">fiecare secțiune împinge spre acțiune</div></span></div>
-      <div class="svc" id="s5-c5"><span class="n">05</span><span><div class="tt">Scripturi reclame video</div><div class="ss">30 de secunde care vând, cadru cu cadru</div></span></div>
-      <div class="svc" id="s5-c6"><span class="n">06</span><span><div class="tt">Strategie completă</div><div class="ss">poziționare, canale, plan pe 90 de zile</div></span></div>
+    <div class="ghost" data-layout-ignore style="font-size:230px; bottom:-40px; left:-30px">06</div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">04 · Servicii</div>
+    <div class="content" style="gap:24px; padding:230px 90px">
+      <div class="svc" id="s11-1"><span class="n">01</span><span><div class="tt">Reclame Meta &amp; Google</div><div class="ss">hooks care opresc scroll-ul</div></span></div>
+      <div class="svc" id="s11-2"><span class="n">02</span><span><div class="tt">Landing page-uri</div><div class="ss">vizitatori → clienți</div></span></div>
+      <div class="svc" id="s11-3"><span class="n">03</span><span><div class="tt">Email marketing</div><div class="ss">vânzări pe pilot automat</div></span></div>
+      <div class="svc" id="s11-4"><span class="n">04</span><span><div class="tt">Copy pentru website</div><div class="ss">fiecare secțiune vinde</div></span></div>
+      <div class="svc" id="s11-5"><span class="n">05</span><span><div class="tt">Scripturi reclame video</div><div class="ss">30 de secunde care vând</div></span></div>
+      <div class="svc" id="s11-6"><span class="n">06</span><span><div class="tt">Strategie completă</div><div class="ss">plan pe 90 de zile</div></span></div>
+    </div>
+    <div class="cap" id="cap-5">Texte și reclame create pentru conversii — nu doar ca să sune bine.</div>
+  </div>
+
+  <!-- SC12 39.70–43.97 stats (light) -->
+  <div id="sc12" class="scene light">
+    <div class="grid"></div>
+    <div class="wm" style="color:var(--inkblk)">Copy<em>Stack</em></div><div class="corner">Rezultate</div>
+    <div class="content" style="gap:70px">
+      <div class="ptitle" id="s12-t">Focus pe <span style="color:var(--gold)">rezultate.</span></div>
+      <div class="statrow">
+        <div class="statcard" id="s12-c1"><div class="ic"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/></svg></div>
+          <div class="v">+120%</div><div class="l">mai mulți clienți</div></div>
+        <div class="statcard" id="s12-c2"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+          <div class="v">+85%</div><div class="l">conversii</div></div>
+        <div class="statcard" id="s12-c3"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+          <div class="v">+90%</div><div class="l">venituri</div></div>
+      </div>
+      <div class="statnote" id="s12-sub">Rezultate reale pentru afaceri reale</div>
     </div>
   </div>
 
-  <!-- ============ S6 DIFFERENCE 75.5–90.5 ============ -->
-  <div id="s6" class="scene">
+  <!-- SC13 43.97–48.25 difference (dark) -->
+  <div id="sc13" class="scene">
     <div class="glow" data-layout-ignore style="top:50%; left:50%; margin:-700px 0 0 -700px"></div>
     <div class="grid"></div>
-    <div class="ghost" data-layout-ignore style="font-size:340px; top:-60px; right:-100px">VS</div>
-    <div class="wm">Copy<em>Stack</em></div>
-    <div class="corner" style="top:64px; right:56px">05 · Diferența</div>
-    <div class="content">
-      <div class="mono" id="s6-eyebrow">Diferența</div>
-      <div class="diff-a" id="s6-a">AI generează texte.</div>
-      <div class="diff-b" id="s6-b">Eu construiesc strategia din spatele lor.</div>
-      <div class="rule" id="s6-rule" style="width:380px"></div>
-      <div class="diff-cmp">
-        <div class="cmp-row" id="s6-r1"><span class="k">AI</span><span style="color:var(--mut)">= viteză</span></div>
-        <div class="cmp-row" id="s6-r2"><span class="k">EU</span><span>= psihologia, cercetarea, mesajul final</span></div>
-      </div>
+    <div class="ghost" data-layout-ignore style="font-size:330px; top:-50px; right:-90px">VS</div>
+    <div class="wm">Copy<em>Stack</em></div><div class="corner">05 · Diferența</div>
+    <div class="content" style="gap:64px">
+      <div class="diff-a" id="s13-a">AI generează texte.</div>
+      <div class="diff-b" id="s13-b">Eu construiesc strategia din spatele lor.</div>
+      <div class="rule" id="s13-rule" style="width:380px"></div>
     </div>
   </div>
 
-  <!-- ============ S7 CTA 90.5–100 ============ -->
-  <div id="s7" class="scene">
-    <div class="glow" data-layout-ignore id="s7-glow" style="top:50%; left:50%; margin:-700px 0 0 -700px;
+  <!-- SC14 48.25–52.52 target (light) -->
+  <div id="sc14" class="scene light">
+    <div class="grid"></div>
+    <div class="wm" style="color:var(--inkblk)">Copy<em>Stack</em></div><div class="corner">Țintă</div>
+    <div class="content" style="gap:74px">
+      <div class="msg-h" id="s14-t">Mesajul potrivit.<br>Persoanele potrivite.<br><span class="am">Rezultate reale.</span></div>
+      <div class="target" id="s14-tg">
+        <div class="tring tr1"></div><div class="tring tr2"></div><div class="tring tr3"></div><div class="tcore"></div>
+      </div>
+    </div>
+    <div class="stamp" id="st-buc" style="right:120px; bottom:500px">BUCUREȘTI · REMOTE</div>
+  </div>
+
+  <!-- SC15 52.52–62 CTA (dark, final) -->
+  <div id="sc15" class="scene">
+    <div class="glow" data-layout-ignore id="s15-glow" style="top:50%; left:50%; margin:-700px 0 0 -700px;
       background:radial-gradient(circle, rgba(245,166,35,.32), transparent 65%)"></div>
     <div class="grid"></div>
     <div class="wm">Copy<em>Stack</em></div>
-    <div class="content">
-      <div class="cta-head" id="s7-head">Hai să <em>vorbim.</em></div>
-      <div class="cta-sub" id="s7-sub">Reclame și texte care chiar aduc rezultate — intră pe site și programează un apel gratuit.</div>
-      <div class="cta-pill" id="s7-pill">Programează un apel gratuit</div>
-      <div class="cta-url" id="s7-url">copystack-9.polsia.app</div>
+    <div class="content" style="gap:44px">
+      <div class="cta-head" id="s15-h">Hai să <em>vorbim.</em></div>
+      <div class="cta-sub" id="s15-s">Reclame și texte care chiar aduc rezultate — programează un apel gratuit.</div>
+      <div class="cta-pill" id="s15-p">Programează un apel gratuit</div>
+      <div class="cta-url" id="s15-u">copystack-9.polsia.app</div>
     </div>
+    <div class="stamp dark" id="st-24h" style="left:110px; top:470px">RĂSPUNS ÎN 24H</div>
   </div>
 
 </div>
@@ -302,119 +421,210 @@
 <script>
 window.__timelines = window.__timelines || {};
 const tl = gsap.timeline({ paused: true });
+/* beat grid: 112.35 BPM, first beat 0.163s, period 0.5341s — measured from the track */
+const B = n => 0.163 + n * 0.5341;
 
-/* ---------- S1 HOOK (0–4.5) ---------- */
-tl.fromTo("#s1-eyebrow", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, 0.12);
-tl.fromTo("#s1-l1", { opacity: 0, y: 90 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, 0.22);
-tl.fromTo("#s1-l2", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power2.out" }, 1.15);
-tl.fromTo("#s1-l3", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)" }, 2.35);
-tl.fromTo("#s1-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power4.out" }, 2.6);
-tl.fromTo("#s1-banner", { opacity: 0, rotation: -5, y: 50 }, { opacity: 1, rotation: -2, y: 0, duration: 0.35, ease: "back.out(2.2)" }, 3.0);
-tl.to("#s1 .glow", { x: -80, y: 60, duration: 4.5, ease: "sine.inOut" }, 0);
-
-/* T1: blur crossfade 4.5 */
-tl.to("#s1", { filter: "blur(10px)", scale: 1.04, opacity: 0, duration: 0.35, ease: "power2.inOut" }, 4.5);
-tl.fromTo("#s2", { filter: "blur(10px)", scale: 0.96, opacity: 0 },
-  { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.35, ease: "power2.inOut" }, 4.55);
-tl.set("#s1", { opacity: 0, visibility: "hidden" }, 5.0);
-
-/* ---------- S2 TRUTH (4.5–12) ---------- */
-tl.fromTo("#s2-eyebrow", { opacity: 0, letterSpacing: "1em" }, { opacity: 1, letterSpacing: ".3em", duration: 0.4, ease: "power2.out" }, 4.9);
-tl.fromTo("#s2-head", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 5.1);
-tl.fromTo("#s2-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power3.out" }, 5.6);
-tl.fromTo("#s2-x1", { opacity: 0, x: -130 }, { opacity: 1, x: 0, duration: 0.3, ease: "power4.out" }, 6.5);
-tl.fromTo("#s2-x2", { opacity: 0, x: 130 }, { opacity: 1, x: 0, duration: 0.3, ease: "power4.out" }, 7.4);
-tl.fromTo("#s2-x3", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.32, ease: "back.out(1.8)" }, 8.3);
-tl.to("#s2 .ghost", { y: 60, duration: 7.5, ease: "sine.inOut" }, 4.5);
-
-/* T2: vertical push 12 */
-tl.to("#s2", { y: -1920, duration: 0.45, ease: "power3.inOut" }, 12);
-tl.fromTo("#s3", { y: 1920, opacity: 1 }, { y: 0, duration: 0.45, ease: "power3.inOut" }, 12);
-tl.set("#s2", { opacity: 0, visibility: "hidden" }, 12.5);
-
-/* ---------- S3 SITE HERO (12–22) ---------- */
-tl.fromTo("#s3-browser", { opacity: 0, y: 120, rotationX: 7 }, { opacity: 1, y: 0, rotationX: 0, duration: 0.5, ease: "power3.out" }, 12.5);
-tl.fromTo("#s3-site .nav", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 12.85);
-tl.fromTo("#s3-site .eyebrow", { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, 13.0);
-tl.fromTo("#s3-site h1", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, 13.15);
-tl.fromTo("#s3-site .sub", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 13.5);
-tl.fromTo("#s3-site .btns", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.32, ease: "back.out(1.6)" }, 13.75);
-tl.fromTo("#s3-site .proof", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 14.0);
-tl.to("#s3-browser", { y: -34, duration: 8, ease: "sine.inOut" }, 14.0);
-
-function cap(id, t0, t1) {
-  tl.fromTo(id, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.28, ease: "power3.out" }, t0);
-  tl.to(id, { opacity: 0, duration: 0.2, ease: "power2.in" }, t1 - 0.2);
-  tl.set(id, { opacity: 0, visibility: "hidden" }, t1);
+function kill(sel, t) { tl.set(sel, { opacity: 0, visibility: "hidden" }, t); }
+function stamp(sel, t, rot) {
+  tl.fromTo(sel, { opacity: 0, scale: 0.3, rotation: rot * 3 },
+    { opacity: 1, scale: 1, rotation: rot, duration: 0.32, ease: "back.out(2.4)" }, t);
 }
-cap("#cap-1", 12.6, 15.6);
-cap("#cap-2", 15.8, 18.8);
-cap("#cap-3", 19.0, 21.9);
+function capIn(sel, t0, t1) {
+  tl.fromTo(sel, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.28, ease: "power3.out" }, t0);
+  tl.to(sel, { opacity: 0, duration: 0.2, ease: "power2.in" }, t1 - 0.2);
+  tl.set(sel, { opacity: 0, visibility: "hidden" }, t1);
+}
+function flash(t, peak) {
+  tl.fromTo("#flash", { opacity: 0 }, { opacity: peak, duration: 0.07, ease: "power1.out" }, t);
+  tl.to("#flash", { opacity: 0, duration: 0.22, ease: "power2.out" }, t + 0.07);
+}
 
-/* T3: crossfade 22 */
-tl.to("#s3", { opacity: 0, duration: 0.35, ease: "power2.inOut" }, 22);
-tl.fromTo("#s4", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.inOut" }, 22);
-tl.set("#s3", { opacity: 0, visibility: "hidden" }, 22.45);
+/* ---- SC1 0–2.30 ---- */
+tl.fromTo("#s1-eb", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, 0.1);
+tl.fromTo("#s1-t", { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, B(0));
+stamp("#st-q", B(3), 8);
+tl.to("#sc1 .glow", { x: -60, duration: 2.3, ease: "sine.inOut" }, 0);
 
-/* ---------- S4 PROCES (22–34) ---------- */
-tl.fromTo("#s4 .browser", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }, 22.4);
-const stepIds = ["#s4-st1", "#s4-st2", "#s4-st3", "#s4-st4", "#s4-st5", "#s4-st6"];
-stepIds.forEach((id, i) => {
-  tl.fromTo(id, { opacity: 0, x: i % 2 ? 100 : -100 },
-    { opacity: 1, x: 0, duration: 0.32, ease: "power4.out" }, 23.0 + i * 1.15);
+/* T: push left on bar */
+tl.to("#sc1", { x: -1080, duration: 0.4, ease: "power3.inOut" }, B(4));
+tl.fromTo("#sc2", { x: 1080, opacity: 1 }, { x: 0, duration: 0.4, ease: "power3.inOut" }, B(4));
+kill("#sc1", B(4) + 0.45);
+
+/* ---- SC2 2.30–4.44 ---- */
+tl.fromTo("#s2-t", { opacity: 0, filter: "blur(16px)", scale: 1.08 },
+  { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.45, ease: "power2.out" }, B(4) + 0.15);
+tl.to("#sc2 .glow", { y: 50, duration: 2.1, ease: "sine.inOut" }, B(4));
+
+/* T: vertical push */
+tl.to("#sc2", { y: -1920, duration: 0.4, ease: "power3.inOut" }, B(8));
+tl.fromTo("#sc3", { y: 1920, opacity: 1 }, { y: 0, duration: 0.4, ease: "power3.inOut" }, B(8));
+kill("#sc2", B(8) + 0.45);
+
+/* ---- SC3 4.44–6.58 ---- */
+tl.fromTo("#s3-t", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)" }, B(8) + 0.12);
+tl.fromTo("#s3-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power4.out" }, B(9));
+stamp("#st-slop", B(10), -6);
+
+/* T: blur crossfade */
+tl.to("#sc3", { filter: "blur(10px)", scale: 1.05, opacity: 0, duration: 0.32, ease: "power2.inOut" }, B(12));
+tl.fromTo("#sc4", { filter: "blur(10px)", scale: 0.95, opacity: 0 },
+  { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.32, ease: "power2.inOut" }, B(12) + 0.04);
+kill("#sc3", B(12) + 0.4);
+
+/* ---- SC4 6.58–10.85: AI chip, labels pop per beat ---- */
+tl.fromTo("#s4-t", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, B(12) + 0.15);
+tl.fromTo("#s4-chip", { opacity: 0, scale: 0.4, rotation: -10 },
+  { opacity: 1, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.7)" }, B(13));
+["#s4-l1","#s4-l2","#s4-l3","#s4-l4","#s4-l5","#s4-l6"].forEach((id, i) => {
+  tl.fromTo(id, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.26, ease: "back.out(2)" }, B(14 + i));
 });
-tl.fromTo("#s4-rail", { height: 0 }, { height: 1060, duration: 9, ease: "none" }, 23.0);
-tl.to("#s4 .glow", { x: 90, y: -70, duration: 11.5, ease: "sine.inOut" }, 22);
 
-cap("#cap-4", 22.5, 25.3);
-cap("#cap-5", 25.5, 28.0);
-cap("#cap-6", 28.2, 30.7);
-cap("#cap-7", 30.9, 33.8);
+/* T: hard cut + flash */
+flash(B(20), 0.45);
+tl.set("#sc4", { opacity: 0, visibility: "hidden" }, B(20) + 0.05);
+tl.fromTo("#sc5", { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }, B(20));
 
-/* T4: squeeze 34 */
-tl.to("#s4", { scaleX: 0, transformOrigin: "left center", duration: 0.32, ease: "power3.inOut" }, 34);
-tl.fromTo("#s5", { scaleX: 0, transformOrigin: "right center", opacity: 1 },
-  { scaleX: 1, duration: 0.32, ease: "power3.inOut" }, 34.08);
-tl.set("#s4", { opacity: 0 }, 34.45);
+/* ---- SC5 10.85–12.99: x rows on consecutive beats ---- */
+tl.fromTo("#s5-x1", { opacity: 0, x: -140 }, { opacity: 1, x: 0, duration: 0.26, ease: "power4.out" }, B(20) + 0.08);
+tl.fromTo("#s5-x2", { opacity: 0, x: 140 }, { opacity: 1, x: 0, duration: 0.26, ease: "power4.out" }, B(21));
+tl.fromTo("#s5-x3", { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(2)" }, B(22));
 
-/* ---------- S5 SERVICII (34–46) ---------- */
-tl.fromTo("#s5-eyebrow", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 34.35);
-const svcIds = ["#s5-c1", "#s5-c2", "#s5-c3", "#s5-c4", "#s5-c5", "#s5-c6"];
-const svcEases = ["power4.out", "back.out(1.5)", "expo.out", "power4.out", "back.out(1.5)", "expo.out"];
-svcIds.forEach((id, i) => {
+/* T: slow blur dissolve into breakdown (music dips) */
+tl.to("#sc5", { filter: "blur(18px)", opacity: 0, duration: 0.6, ease: "power1.inOut" }, B(24) - 0.2);
+tl.fromTo("#sc6", { opacity: 0, filter: "blur(18px)" },
+  { opacity: 1, filter: "blur(0px)", duration: 0.7, ease: "power1.out" }, B(24));
+kill("#sc5", B(24) + 0.6);
+
+/* ---- SC6 12.99–16.19 breakdown: slow, dim ---- */
+tl.fromTo("#s6-t1", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, B(24) + 0.3);
+tl.fromTo("#s6-t2", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.out" }, B(25) + 0.3);
+tl.fromTo("#s6-glow", { scale: 0.8 }, { scale: 1.15, duration: 3.0, ease: "sine.inOut" }, B(24));
+capIn("#cap-1", 13.4, 15.9);
+
+/* T: DROP 16.19 — zoom-through + big flash */
+flash(B(30), 0.9);
+tl.to("#sc6", { scale: 1.6, opacity: 0, duration: 0.32, ease: "power3.in" }, B(30) - 0.18);
+tl.fromTo("#sc7", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, B(30));
+kill("#sc6", B(30) + 0.3);
+
+/* ---- SC7 16.19–20.47 laptop ---- */
+tl.fromTo("#s7-eb", { opacity: 0, letterSpacing: "1em" }, { opacity: 1, letterSpacing: ".3em", duration: 0.35, ease: "power2.out" }, B(30) + 0.2);
+tl.fromTo("#s7-laptop", { opacity: 0, y: 140, rotationX: 14 },
+  { opacity: 1, y: 0, rotationX: 0, duration: 0.5, ease: "back.out(1.3)" }, B(30) + 0.1);
+stamp("#st-ctr", B(34), 7);
+stamp("#st-star", B(36), -5);
+
+/* T: squeeze into light process */
+tl.to("#sc7", { scaleX: 0, transformOrigin: "left center", duration: 0.32, ease: "power3.inOut" }, B(38));
+tl.fromTo("#sc8", { scaleX: 0, transformOrigin: "right center", opacity: 1 },
+  { scaleX: 1, duration: 0.32, ease: "power3.inOut" }, B(38) + 0.06);
+kill("#sc7", B(38) + 0.42);
+
+/* ---- SC8 20.47–24.74 process icons pop per beat ---- */
+tl.fromTo("#s8-t", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, B(38) + 0.2);
+tl.fromTo("#s8-p1", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, B(39));
+tl.fromTo("#s8-a1", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.22, ease: "power3.out" }, B(39) + 0.3);
+tl.fromTo("#s8-p2", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, B(40));
+tl.fromTo("#s8-a2", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.22, ease: "power3.out" }, B(40) + 0.3);
+tl.fromTo("#s8-p3", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, B(41));
+tl.fromTo("#s8-p4", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.32, ease: "back.out(1.6)" }, B(42));
+capIn("#cap-2", 21.0, 24.4);
+
+/* T: push up into notebook */
+tl.to("#sc8", { y: -1920, duration: 0.38, ease: "power3.inOut" }, B(46));
+tl.fromTo("#sc9", { y: 1920, opacity: 1 }, { y: 0, duration: 0.38, ease: "power3.inOut" }, B(46));
+kill("#sc8", B(46) + 0.42);
+
+/* ---- SC9 24.74–29.01 notebook: ticks on every beat ---- */
+tl.fromTo("#s9-nb", { opacity: 0, y: 120, rotation: -6 },
+  { opacity: 1, y: 0, rotation: -2, duration: 0.4, ease: "back.out(1.5)" }, B(46) + 0.1);
+["#s9-i1","#s9-i2","#s9-i3","#s9-i4","#s9-i5","#s9-i6"].forEach((id, i) => {
+  tl.fromTo(id, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.24, ease: "power3.out" }, B(47 + i));
+  tl.fromTo(id + " .chk", { scale: 0 }, { scale: 1, duration: 0.26, ease: "back.out(2.6)" }, B(47 + i) + 0.08);
+});
+capIn("#cap-3", 25.2, 28.7);
+
+/* T: color dip into dark steps */
+tl.to("#sc9", { opacity: 0, duration: 0.18, ease: "power2.in" }, B(54));
+tl.fromTo("#sc10", { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power2.out" }, B(54) + 0.18);
+kill("#sc9", B(54) + 0.45);
+
+/* ---- SC10 29.01–33.29 quick steps ---- */
+["#s10-1","#s10-2","#s10-3","#s10-4","#s10-5"].forEach((id, i) => {
+  tl.fromTo(id, { opacity: 0, x: i % 2 ? 110 : -110 },
+    { opacity: 1, x: 0, duration: 0.28, ease: "power4.out" }, B(55 + i));
+});
+stamp("#st-free", B(60), 6);
+capIn("#cap-4", 29.4, 33.0);
+tl.to("#sc10 .glow", { x: 70, duration: 4.2, ease: "sine.inOut" }, B(54));
+
+/* T: push left into services */
+tl.to("#sc10", { x: -1080, duration: 0.36, ease: "power3.inOut" }, B(62));
+tl.fromTo("#sc11", { x: 1080, opacity: 1 }, { x: 0, duration: 0.36, ease: "power3.inOut" }, B(62));
+kill("#sc10", B(62) + 0.4);
+
+/* ---- SC11 33.29–39.70 services: one card every 2 beats ---- */
+const svcE = ["power4.out", "back.out(1.6)", "expo.out", "power4.out", "back.out(1.6)", "expo.out"];
+["#s11-1","#s11-2","#s11-3","#s11-4","#s11-5","#s11-6"].forEach((id, i) => {
   tl.fromTo(id, { opacity: 0, y: 120, scale: 0.9 },
-    { opacity: 1, y: 0, scale: 1, duration: 0.38, ease: svcEases[i] }, 34.7 + i * 1.8);
+    { opacity: 1, y: 0, scale: 1, duration: 0.32, ease: svcE[i] }, B(63 + i * 2));
 });
-tl.to("#s5 .ghost", { x: 60, duration: 11.5, ease: "sine.inOut" }, 34);
+capIn("#cap-5", 36.6, 39.3);
+tl.to("#sc11 .ghost", { x: 50, duration: 6.4, ease: "sine.inOut" }, B(62));
 
-/* T5: color dip 46 */
-tl.to("#s5", { opacity: 0, duration: 0.18, ease: "power2.in" }, 46);
-tl.fromTo("#s6", { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power2.out" }, 46.22);
-tl.set("#s5", { opacity: 0, visibility: "hidden" }, 46.5);
+/* T: flash cut into light stats */
+flash(B(74), 0.5);
+tl.set("#sc11", { opacity: 0, visibility: "hidden" }, B(74) + 0.05);
+tl.fromTo("#sc12", { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }, B(74));
 
-/* ---------- S6 DIFFERENCE (46–55) ---------- */
-tl.fromTo("#s6-eyebrow", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, 46.4);
-tl.fromTo("#s6-a", { opacity: 0, filter: "blur(12px)" }, { opacity: 0.85, filter: "blur(0px)", duration: 0.45, ease: "power2.out" }, 46.6);
-tl.fromTo("#s6-b", { opacity: 0, y: 90 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 47.5);
-tl.fromTo("#s6-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power4.out" }, 48.2);
-tl.fromTo("#s6-r1", { opacity: 0, x: -90 }, { opacity: 1, x: 0, duration: 0.32, ease: "power4.out" }, 50.4);
-tl.fromTo("#s6-r2", { opacity: 0, x: 90 }, { opacity: 1, x: 0, duration: 0.35, ease: "back.out(1.6)" }, 51.4);
-tl.to("#s6 .ghost", { rotation: 4, duration: 9, ease: "sine.inOut", transformOrigin: "center center" }, 46);
+/* ---- SC12 39.70–43.97 stats pop per beat ---- */
+tl.fromTo("#s12-t", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.36, ease: "expo.out" }, B(74) + 0.1);
+["#s12-c1","#s12-c2","#s12-c3"].forEach((id, i) => {
+  tl.fromTo(id, { opacity: 0, y: 110, rotation: i === 1 ? 3 : -3 },
+    { opacity: 1, y: 0, rotation: 0, duration: 0.32, ease: "back.out(1.8)" }, B(75 + i));
+});
+tl.fromTo("#s12-sub", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, B(79));
 
-/* T6: blur crossfade 55 (riser lands here) */
-tl.to("#s6", { filter: "blur(12px)", scale: 1.05, opacity: 0, duration: 0.4, ease: "power2.inOut" }, 55);
-tl.fromTo("#s7", { filter: "blur(12px)", scale: 0.95, opacity: 0 },
-  { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.4, ease: "power2.inOut" }, 55.08);
-tl.set("#s6", { opacity: 0, visibility: "hidden" }, 55.6);
+/* T: hard cut + small flash into difference */
+flash(B(82), 0.4);
+tl.set("#sc12", { opacity: 0, visibility: "hidden" }, B(82) + 0.05);
+tl.fromTo("#sc13", { opacity: 0, scale: 1.07 }, { opacity: 1, scale: 1, duration: 0.24, ease: "power2.out" }, B(82));
 
-/* ---------- S7 CTA (55–62, final scene may exit) ---------- */
-tl.fromTo("#s7-head", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 55.55);
-tl.fromTo("#s7-sub", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 56.0);
-tl.fromTo("#s7-pill", { opacity: 0, scale: 0.78 }, { opacity: 1, scale: 1, duration: 0.38, ease: "back.out(2)" }, 56.35);
-tl.fromTo("#s7-url", { opacity: 0, letterSpacing: ".6em" }, { opacity: 1, letterSpacing: ".04em", duration: 0.45, ease: "power2.out" }, 56.9);
-tl.to("#s7-pill", { scale: 1.06, yoyo: true, repeat: 7, duration: 0.32, ease: "sine.inOut" }, 57.4);
-tl.to("#s7-glow", { scale: 1.18, yoyo: true, repeat: 3, duration: 1.1, ease: "sine.inOut" }, 56.2);
-tl.to("#s7 .content, #s7 .wm", { opacity: 0, duration: 0.6, ease: "power2.in" }, 61.3);
+/* ---- SC13 43.97–48.25 difference ---- */
+tl.fromTo("#s13-a", { opacity: 0, filter: "blur(12px)" }, { opacity: 0.85, filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, B(82) + 0.15);
+tl.fromTo("#s13-b", { opacity: 0, y: 90 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, B(84));
+tl.fromTo("#s13-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: "power4.out" }, B(86));
+tl.to("#sc13 .ghost", { rotation: 4, duration: 4.2, ease: "sine.inOut", transformOrigin: "center center" }, B(82));
+
+/* T: push right into target */
+tl.to("#sc13", { x: 1080, duration: 0.36, ease: "power3.inOut" }, B(90));
+tl.fromTo("#sc14", { x: -1080, opacity: 1 }, { x: 0, duration: 0.36, ease: "power3.inOut" }, B(90));
+kill("#sc13", B(90) + 0.4);
+
+/* ---- SC14 48.25–52.52 target rings pop per beat ---- */
+tl.fromTo("#s14-t", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, B(90) + 0.15);
+tl.fromTo("#s14-tg .tr1", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, B(91));
+tl.fromTo("#s14-tg .tr2", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, B(92));
+tl.fromTo("#s14-tg .tr3", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.8)" }, B(93));
+tl.fromTo("#s14-tg .tcore", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.34, ease: "back.out(2.6)" }, B(94));
+stamp("#st-buc", B(96), 5);
+
+/* T: blur crossfade into CTA */
+tl.to("#sc14", { filter: "blur(12px)", scale: 1.05, opacity: 0, duration: 0.4, ease: "power2.inOut" }, B(98));
+tl.fromTo("#sc15", { filter: "blur(12px)", scale: 0.95, opacity: 0 },
+  { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.4, ease: "power2.inOut" }, B(98) + 0.06);
+kill("#sc14", B(98) + 0.5);
+
+/* ---- SC15 52.52–62 CTA, pill pulses on the beat ---- */
+tl.fromTo("#s15-h", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, B(98) + 0.2);
+tl.fromTo("#s15-s", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, B(99) + 0.2);
+tl.fromTo("#s15-p", { opacity: 0, scale: 0.78 }, { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(2)" }, B(100));
+tl.fromTo("#s15-u", { opacity: 0, letterSpacing: ".6em" }, { opacity: 1, letterSpacing: ".04em", duration: 0.45, ease: "power2.out" }, B(101));
+stamp("#st-24h", B(103), -6);
+/* pulse period = exactly one beat (0.534s): up half-beat, down half-beat */
+tl.to("#s15-p", { scale: 1.07, yoyo: true, repeat: 21, duration: 0.267, ease: "sine.inOut" }, B(102));
+tl.to("#s15-glow", { scale: 1.2, yoyo: true, repeat: 7, duration: 1.068, ease: "sine.inOut" }, B(100));
+tl.to("#sc15 .content, #sc15 .wm, #st-24h", { opacity: 0, duration: 0.6, ease: "power2.in" }, 61.3);
 
 window.__timelines["main"] = tl;
 </script>
