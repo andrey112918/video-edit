@@ -335,6 +335,93 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 .card-why::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,rgba(245,166,35,.4),transparent)}
 .card ul.checks li::before{content:"✓";color:var(--accent)}
 
+/* ============ Servicii: before/after slider ============ */
+.ba{margin-top:clamp(3.5rem,7vw,5.5rem)}
+.ba-head{max-width:34em;margin-bottom:1.8rem}
+.ba-head h3{font-size:clamp(1.5rem,3vw,2.1rem)}
+.ba-head p{color:var(--fg-muted);margin-top:.5rem;font-size:.97rem}
+.ba-frame{
+  position:relative;border:1px solid var(--border-strong);border-radius:var(--radius);
+  overflow:hidden;aspect-ratio:16/10;user-select:none;-webkit-user-select:none;
+  container-type:inline-size;background:var(--bg-elevated);
+  box-shadow:0 34px 90px -30px rgba(0,0,0,.85);
+}
+.ba-layer{position:absolute;inset:0;overflow:hidden}
+.ba-after{will-change:clip-path}
+.ba-divider{
+  position:absolute;top:0;bottom:0;left:72%;width:2px;margin-left:-1px;z-index:5;
+  background:var(--accent);box-shadow:0 0 18px rgba(245,166,35,.6);pointer-events:none;
+}
+.ba-knob{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  background:var(--accent);color:#14120e;box-shadow:0 8px 26px -6px rgba(245,166,35,.6);
+}
+.ba-knob svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ba-range{
+  position:absolute;inset:0;width:100%;height:100%;z-index:6;margin:0;
+  opacity:0;cursor:ew-resize;-webkit-appearance:none;appearance:none;touch-action:pan-y;
+}
+.ba-frame:has(.ba-range:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
+.ba-tag{
+  position:absolute;top:4%;z-index:4;pointer-events:none;
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:.45rem .9rem;border-radius:999px;backdrop-filter:blur(6px);
+}
+.ba-tag.bad{left:3%;color:#fca5a5;background:rgba(40,10,10,.55);border:1px solid rgba(248,113,113,.4)}
+.ba-tag.good{right:3%;color:var(--accent-bright);background:rgba(20,15,5,.6);border:1px solid rgba(245,166,35,.5)}
+.ba-hint{
+  display:flex;align-items:center;gap:.7rem;justify-content:center;margin-top:1.1rem;
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-faint);
+}
+.ba-hint svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:nudge 1.6s var(--ease) infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-7px)}}
+
+/* --- mock site: generic AI slop --- */
+.mock{position:absolute;inset:0;display:flex;flex-direction:column}
+.mock-bad{background:#f4f5fb;color:#3a3a4a;font-family:var(--font-body)}
+.mock-bad .m-nav{
+  display:flex;align-items:center;gap:3cqw;padding:2.2cqw 4cqw;background:#fff;
+  border-bottom:1px solid #e5e6f0;font-size:1.7cqw;color:#7a7a8c;
+}
+.mock-bad .m-logo{font-weight:700;font-size:2.1cqw;color:#6d5ae0;margin-right:auto}
+.mock-bad .m-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 8cqw;gap:1.6cqw}
+.mock-bad .m-h1{
+  font-size:4.6cqw;font-weight:800;line-height:1.15;
+  background:linear-gradient(90deg,#6d5ae0,#c44ae0,#e0568a);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.mock-bad .m-p{font-size:1.9cqw;line-height:1.55;color:#74748a;max-width:62cqw}
+.mock-bad .m-btns{display:flex;gap:1.6cqw;margin-top:1cqw}
+.mock-bad .m-btn{background:linear-gradient(90deg,#6d5ae0,#9b4ae0);color:#fff;border-radius:.9cqw;padding:1.4cqw 3.4cqw;font-size:1.8cqw;font-weight:600}
+.mock-bad .m-btn.alt{background:linear-gradient(90deg,#9b4ae0,#6d5ae0)}
+.mock-bad .m-cards{display:flex;gap:2.4cqw;padding:0 6cqw 4cqw}
+.mock-bad .m-card{
+  flex:1;background:#fff;border-radius:1.4cqw;padding:2.4cqw;text-align:center;
+  box-shadow:0 1cqw 3cqw rgba(109,90,224,.12);font-size:1.6cqw;color:#74748a;
+}
+.mock-bad .m-card b{display:block;font-size:1.9cqw;color:#3a3a4a;margin:.8cqw 0 .5cqw}
+.mock-bad .m-emoji{font-size:3.4cqw;line-height:1}
+
+/* --- mock site: CopyStack version --- */
+.mock-good{background:linear-gradient(170deg,#14120e,#0a0908);color:var(--fg)}
+.mock-good .m-nav{display:flex;align-items:center;padding:2.2cqw 4cqw;border-bottom:1px solid var(--border);font-size:1.7cqw}
+.mock-good .m-logo{font-family:var(--font-display);font-weight:900;font-size:2.2cqw;margin-right:auto}
+.mock-good .m-logo i{color:var(--accent);font-style:normal}
+.mock-good .m-cta{background:var(--accent);color:#14120e;border-radius:99cqw;padding:1cqw 2.6cqw;font-weight:600;font-size:1.6cqw}
+.mock-good .m-hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 6cqw;gap:1.7cqw}
+.mock-good .m-eyebrow{font-family:var(--font-mono);font-size:1.3cqw;letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
+.mock-good .m-h1{font-family:var(--font-display);font-weight:900;font-size:5.4cqw;line-height:1.05;letter-spacing:-.01em;max-width:60cqw}
+.mock-good .m-h1 em{color:var(--accent);font-style:italic}
+.mock-good .m-p{font-size:1.9cqw;line-height:1.55;color:var(--fg-muted);max-width:48cqw}
+.mock-good .m-btns{display:flex;gap:1.6cqw;align-items:center;margin-top:.8cqw}
+.mock-good .m-btn{background:linear-gradient(135deg,var(--accent),#e88f12);color:#14120e;border-radius:99cqw;padding:1.5cqw 3.4cqw;font-size:1.8cqw;font-weight:700;box-shadow:0 1.4cqw 4cqw -1cqw rgba(245,166,35,.5)}
+.mock-good .m-btn.alt{background:none;border:1px solid var(--border-strong);color:var(--fg);box-shadow:none;font-weight:500}
+.mock-good .m-proof{font-size:1.5cqw;color:var(--fg-faint);display:flex;gap:1.2cqw;align-items:center}
+.mock-good .m-proof b{color:var(--accent)}
+.mock-good .m-stats{display:flex;border-top:1px solid var(--border);padding:2cqw 6cqw;gap:6cqw}
+.mock-good .m-stat b{font-family:var(--font-display);font-weight:900;font-size:2.8cqw;color:var(--accent);display:block;line-height:1.1}
+.mock-good .m-stat span{font-size:1.4cqw;color:var(--fg-muted)}
+
 /* ============ Contact: WhatsApp qualifier widget ============ */
 .chat{
   border:1px solid var(--border);border-radius:22px;overflow:hidden;
@@ -624,6 +711,58 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
           <li>Studiile de caz transformă rezultatele tale în argumentul de vânzare suprem</li>
         </ul>
       </article>
+    </div>
+
+    <div class="ba rv" id="ba">
+      <div class="ba-head">
+        <p class="eyebrow">Înainte / După</p>
+        <h3>Același business. Copy <span class="serif-i">diferit.</span></h3>
+        <p>Așa arată un site generat doar cu AI — și așa arată după ce trece prin mâinile noastre. Trage de mâner spre stânga și vezi diferența.</p>
+      </div>
+      <div class="ba-frame">
+        <!-- before: generic AI template -->
+        <div class="ba-layer" aria-hidden="true">
+          <div class="mock mock-bad">
+            <div class="m-nav"><span class="m-logo">MyBusiness</span><span>Home</span><span>About</span><span>Services</span><span>Contact</span></div>
+            <div class="m-hero">
+              <div class="m-h1">Welcome To Our Amazing Website! 🚀</div>
+              <div class="m-p">We provide best solutions for all your business needs. Our team of experts is dedicated to deliver high quality services in today's fast-paced digital landscape.</div>
+              <div class="m-btns"><span class="m-btn">Learn More</span><span class="m-btn alt">Get Started</span></div>
+            </div>
+            <div class="m-cards">
+              <div class="m-card"><span class="m-emoji">💡</span><b>Innovative Solutions</b>We leverage cutting-edge technology to unlock your potential.</div>
+              <div class="m-card"><span class="m-emoji">⚡</span><b>Fast Delivery</b>Seamless experiences delivered at lightning speed.</div>
+              <div class="m-card"><span class="m-emoji">🏆</span><b>Best Quality</b>Excellence is at the heart of everything we do.</div>
+            </div>
+          </div>
+        </div>
+        <!-- after: CopyStack version -->
+        <div class="ba-layer ba-after" aria-hidden="true">
+          <div class="mock mock-good">
+            <div class="m-nav"><span class="m-logo">Atelier<i>Verde</i></span><span class="m-cta">Cere ofertă</span></div>
+            <div class="m-hero">
+              <span class="m-eyebrow">Mobilier la comandă · București</span>
+              <div class="m-h1">Mobila care îți <em>vinde casa.</em></div>
+              <div class="m-p">Proiectată milimetric pe spațiul tău, montată în 4 săptămâni, garantată 10 ani. Fără șabloane, fără compromisuri.</div>
+              <div class="m-btns"><span class="m-btn">Cere ofertă în 24h</span><span class="m-btn alt">Vezi portofoliul</span></div>
+              <div class="m-proof"><b>★ 4.9</b> din 214 recenzii · 380+ proiecte montate</div>
+            </div>
+            <div class="m-stats">
+              <div class="m-stat"><b>4 săpt.</b><span>de la măsurători la montaj</span></div>
+              <div class="m-stat"><b>10 ani</b><span>garanție reală, în scris</span></div>
+              <div class="m-stat"><b>0 lei</b><span>proiectare 3D și consultanță</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="ba-divider" id="ba-divider">
+          <span class="ba-knob"><svg viewBox="0 0 24 24"><path d="M9 6l-5 6 5 6M15 6l5 6-5 6"/></svg></span>
+        </div>
+        <span class="ba-tag bad">Făcut doar cu AI</span>
+        <span class="ba-tag good">Lucrat cu CopyStack</span>
+        <input class="ba-range" id="ba-range" type="range" min="2" max="98" value="72" step="0.5"
+               aria-label="Compară site-ul generat cu AI cu versiunea îmbunătățită de CopyStack">
+      </div>
+      <p class="ba-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trage spre stânga ca să vezi versiunea CopyStack</p>
     </div>
   </div>
 </section>
@@ -959,6 +1098,37 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
     });
     tlSteps[0].classList.add("open");
     tlSteps[0].querySelector(".tl-head").setAttribute("aria-expanded","true");
+  }
+
+  /* Servicii: before/after website slider */
+  var baRange = document.getElementById("ba-range");
+  if (baRange){
+    var baAfter = document.querySelector(".ba-after"), baDiv = document.getElementById("ba-divider");
+    function setBA(v){
+      baAfter.style.clipPath = "inset(0 0 0 " + v + "%)";
+      baDiv.style.left = v + "%";
+    }
+    baRange.addEventListener("input", function(){ setBA(+baRange.value); });
+    setBA(+baRange.value);
+    /* nudge animation on first view, inviting the drag */
+    if (!reduced){
+      var baSeen = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (!e.isIntersecting) return;
+          baSeen.disconnect();
+          var t0 = null, from = +baRange.value, dip = 26, dur = 1300;
+          (function nud(t){
+            if (!t0) t0 = t;
+            var p = Math.min((t - t0) / dur, 1);
+            var w = Math.sin(p * Math.PI);             /* out and back */
+            var v = from - dip * w * (1 - p * .25);
+            setBA(v); baRange.value = v;
+            if (p < 1) requestAnimationFrame(nud); else { setBA(from); baRange.value = from; }
+          })(performance.now());
+        });
+      }, {threshold:.5});
+      baSeen.observe(document.getElementById("ba"));
+    }
   }
 
   /* Contact: WhatsApp qualifier wizard */
