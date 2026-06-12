@@ -346,8 +346,12 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
   container-type:inline-size;background:var(--bg-elevated);
   box-shadow:0 34px 90px -30px rgba(0,0,0,.85);
 }
-.ba-layer{position:absolute;inset:0;overflow:hidden}
-.ba-after{will-change:clip-path}
+.ba-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(245,166,35,.5) transparent}
+.ba-scroll::-webkit-scrollbar{width:8px}
+.ba-scroll::-webkit-scrollbar-thumb{background:rgba(245,166,35,.45);border-radius:8px}
+.ba-stack{display:grid;min-height:100%}
+.ba-layer{grid-area:1/1;position:relative;min-width:0}
+.ba-after{will-change:clip-path;z-index:2}
 .ba-divider{
   position:absolute;top:0;bottom:0;left:72%;width:2px;margin-left:-1px;z-index:5;
   background:var(--accent);box-shadow:0 0 18px rgba(245,166,35,.6);pointer-events:none;
@@ -358,11 +362,11 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
   background:var(--accent);color:#14120e;box-shadow:0 8px 26px -6px rgba(245,166,35,.6);
 }
 .ba-knob svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-.ba-range{
-  position:absolute;inset:0;width:100%;height:100%;z-index:6;margin:0;
-  opacity:0;cursor:ew-resize;-webkit-appearance:none;appearance:none;touch-action:pan-y;
+.ba-grab{
+  position:absolute;top:0;bottom:0;left:72%;width:48px;margin-left:-24px;z-index:7;
+  background:transparent;border:0;padding:0;cursor:ew-resize;touch-action:none;
 }
-.ba-frame:has(.ba-range:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
+.ba-grab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:8px}
 .ba-tag{
   position:absolute;top:4%;z-index:4;pointer-events:none;
   font-family:var(--font-mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
@@ -377,15 +381,15 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 .ba-hint svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:nudge 1.6s var(--ease) infinite}
 @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-7px)}}
 
-/* --- mock site: generic AI slop --- */
-.mock{position:absolute;inset:0;display:flex;flex-direction:column}
+/* --- mock site: generic AI slop (full page) --- */
+.mock{display:flex;flex-direction:column;min-height:100%}
 .mock-bad{background:#f4f5fb;color:#3a3a4a;font-family:var(--font-body)}
 .mock-bad .m-nav{
   display:flex;align-items:center;gap:3cqw;padding:2.2cqw 4cqw;background:#fff;
   border-bottom:1px solid #e5e6f0;font-size:1.7cqw;color:#7a7a8c;
 }
 .mock-bad .m-logo{font-weight:700;font-size:2.1cqw;color:#6d5ae0;margin-right:auto}
-.mock-bad .m-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 8cqw;gap:1.6cqw}
+.mock-bad .m-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:9cqw 8cqw;gap:1.6cqw}
 .mock-bad .m-h1{
   font-size:4.6cqw;font-weight:800;line-height:1.15;
   background:linear-gradient(90deg,#6d5ae0,#c44ae0,#e0568a);-webkit-background-clip:text;background-clip:text;color:transparent;
@@ -394,33 +398,66 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
 .mock-bad .m-btns{display:flex;gap:1.6cqw;margin-top:1cqw}
 .mock-bad .m-btn{background:linear-gradient(90deg,#6d5ae0,#9b4ae0);color:#fff;border-radius:.9cqw;padding:1.4cqw 3.4cqw;font-size:1.8cqw;font-weight:600}
 .mock-bad .m-btn.alt{background:linear-gradient(90deg,#9b4ae0,#6d5ae0)}
-.mock-bad .m-cards{display:flex;gap:2.4cqw;padding:0 6cqw 4cqw}
+.mock-bad .m-cards{display:flex;gap:2.4cqw;padding:0 6cqw 5cqw}
 .mock-bad .m-card{
   flex:1;background:#fff;border-radius:1.4cqw;padding:2.4cqw;text-align:center;
   box-shadow:0 1cqw 3cqw rgba(109,90,224,.12);font-size:1.6cqw;color:#74748a;
 }
 .mock-bad .m-card b{display:block;font-size:1.9cqw;color:#3a3a4a;margin:.8cqw 0 .5cqw}
 .mock-bad .m-emoji{font-size:3.4cqw;line-height:1}
+.mock-bad .m-sec{padding:5cqw 8cqw;text-align:center;background:#fff}
+.mock-bad .m-h2{font-size:3.2cqw;font-weight:800;color:#3a3a4a;margin-bottom:1.2cqw}
+.mock-bad .m-sec .m-p{margin-inline:auto}
+.mock-bad .m-quote{padding:5cqw 12cqw;text-align:center;font-size:2cqw;color:#74748a;font-style:italic}
+.mock-bad .m-quote b{display:block;margin-top:1.2cqw;font-style:normal;font-size:1.7cqw;color:#3a3a4a}
+.mock-bad .m-band{
+  background:linear-gradient(90deg,#6d5ae0,#c44ae0);color:#fff;text-align:center;
+  padding:5.5cqw 8cqw;display:flex;flex-direction:column;align-items:center;gap:1.4cqw;
+}
+.mock-bad .m-band .m-h2{color:#fff}
+.mock-bad .m-band .m-btn{background:#fff;color:#6d5ae0}
+.mock-bad .m-foot{padding:2.6cqw 4cqw;background:#2c2c3a;color:#9a9aae;font-size:1.5cqw;text-align:center}
 
-/* --- mock site: CopyStack version --- */
-.mock-good{background:linear-gradient(170deg,#14120e,#0a0908);color:var(--fg)}
-.mock-good .m-nav{display:flex;align-items:center;padding:2.2cqw 4cqw;border-bottom:1px solid var(--border);font-size:1.7cqw}
-.mock-good .m-logo{font-family:var(--font-display);font-weight:900;font-size:2.2cqw;margin-right:auto}
-.mock-good .m-logo i{color:var(--accent);font-style:normal}
-.mock-good .m-cta{background:var(--accent);color:#14120e;border-radius:99cqw;padding:1cqw 2.6cqw;font-weight:600;font-size:1.6cqw}
-.mock-good .m-hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 6cqw;gap:1.7cqw}
-.mock-good .m-eyebrow{font-family:var(--font-mono);font-size:1.3cqw;letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
-.mock-good .m-h1{font-family:var(--font-display);font-weight:900;font-size:5.4cqw;line-height:1.05;letter-spacing:-.01em;max-width:60cqw}
-.mock-good .m-h1 em{color:var(--accent);font-style:italic}
-.mock-good .m-p{font-size:1.9cqw;line-height:1.55;color:var(--fg-muted);max-width:48cqw}
-.mock-good .m-btns{display:flex;gap:1.6cqw;align-items:center;margin-top:.8cqw}
-.mock-good .m-btn{background:linear-gradient(135deg,var(--accent),#e88f12);color:#14120e;border-radius:99cqw;padding:1.5cqw 3.4cqw;font-size:1.8cqw;font-weight:700;box-shadow:0 1.4cqw 4cqw -1cqw rgba(245,166,35,.5)}
-.mock-good .m-btn.alt{background:none;border:1px solid var(--border-strong);color:var(--fg);box-shadow:none;font-weight:500}
-.mock-good .m-proof{font-size:1.5cqw;color:var(--fg-faint);display:flex;gap:1.2cqw;align-items:center}
-.mock-good .m-proof b{color:var(--accent)}
-.mock-good .m-stats{display:flex;border-top:1px solid var(--border);padding:2cqw 6cqw;gap:6cqw}
-.mock-good .m-stat b{font-family:var(--font-display);font-weight:900;font-size:2.8cqw;color:var(--accent);display:block;line-height:1.1}
-.mock-good .m-stat span{font-size:1.4cqw;color:var(--fg-muted)}
+/* --- mock site: CopyStack version — warm exaggerated minimalism --- */
+.mock-good{background:#FAF5F2;color:#1c1917}
+.mock-good .g-nav{display:flex;align-items:center;padding:2.2cqw 5cqw;border-bottom:1px solid #EEEDED;font-size:1.7cqw;background:#FAF5F2}
+.mock-good .g-logo{font-family:var(--font-display);font-weight:900;font-size:2.2cqw;margin-right:auto;letter-spacing:-.02em}
+.mock-good .g-logo i{color:#D97706;font-style:normal}
+.mock-good .g-cta{background:#1c1917;color:#FAF5F2;border-radius:99cqw;padding:1.1cqw 2.8cqw;font-weight:600;font-size:1.6cqw}
+.mock-good .g-hero{display:flex;flex-direction:column;justify-content:center;padding:8cqw 5cqw 6cqw;gap:1.8cqw}
+.mock-good .g-eyebrow{font-family:var(--font-mono);font-size:1.3cqw;letter-spacing:.32em;text-transform:uppercase;color:#D97706}
+.mock-good .g-h1{font-family:var(--font-display);font-weight:900;font-size:7.4cqw;line-height:.98;letter-spacing:-.035em;max-width:72cqw}
+.mock-good .g-h1 em{color:#D97706;font-style:italic}
+.mock-good .g-p{font-size:1.9cqw;line-height:1.6;color:#78716C;max-width:46cqw}
+.mock-good .g-btns{display:flex;gap:1.6cqw;align-items:center;margin-top:.8cqw}
+.mock-good .g-btn{background:#D97706;color:#fff;border-radius:99cqw;padding:1.5cqw 3.6cqw;font-size:1.8cqw;font-weight:700;box-shadow:0 1.6cqw 4cqw -1.4cqw rgba(217,119,6,.55)}
+.mock-good .g-btn.alt{background:none;border:1px solid #d6cfc9;color:#1c1917;box-shadow:none;font-weight:500}
+.mock-good .g-proof{font-size:1.5cqw;color:#78716C}
+.mock-good .g-proof b{color:#D97706}
+.mock-good .g-stats{display:flex;border-block:1px solid #EEEDED;padding:2.6cqw 5cqw;gap:7cqw;background:#fff}
+.mock-good .g-stat b{font-family:var(--font-display);font-weight:900;font-size:3cqw;color:#1c1917;display:block;line-height:1.1}
+.mock-good .g-stat span{font-size:1.4cqw;color:#78716C}
+.mock-good .g-sec{padding:5.5cqw 5cqw}
+.mock-good .g-h2{font-family:var(--font-display);font-weight:900;font-size:4.2cqw;line-height:1.05;letter-spacing:-.025em;margin-bottom:1cqw}
+.mock-good .g-steps{display:flex;gap:2.4cqw;margin-top:2.6cqw}
+.mock-good .g-step{flex:1;border-top:2px solid #D97706;padding-top:1.6cqw;font-size:1.6cqw;color:#78716C}
+.mock-good .g-step b{display:block;font-size:1.9cqw;color:#1c1917;margin-bottom:.5cqw}
+.mock-good .g-step i{font-family:var(--font-mono);font-style:normal;font-size:1.3cqw;color:#D97706;display:block;margin-bottom:.7cqw}
+.mock-good .g-gallery{display:flex;gap:2cqw;padding:0 5cqw 5.5cqw}
+.mock-good .g-shot{flex:1;aspect-ratio:4/3;border-radius:1.4cqw;position:relative;overflow:hidden}
+.mock-good .g-shot span{
+  position:absolute;left:1.6cqw;bottom:1.4cqw;font-size:1.4cqw;color:#fff;
+  background:rgba(28,25,23,.55);padding:.5cqw 1.3cqw;border-radius:99cqw;backdrop-filter:blur(4px);
+}
+.mock-good .g-shot.s1{background:linear-gradient(160deg,#a18b6e,#5c4f40 55%,#33291f)}
+.mock-good .g-shot.s2{background:linear-gradient(160deg,#9aa78e,#5d6b52 55%,#2f3a28)}
+.mock-good .g-quote{padding:5.5cqw 9cqw;background:#1c1917;color:#FAF5F2;text-align:center}
+.mock-good .g-quote .q{font-family:var(--font-display);font-style:italic;font-size:2.7cqw;line-height:1.35}
+.mock-good .g-quote .q em{color:#fbbf24;font-style:italic}
+.mock-good .g-quote b{display:block;margin-top:1.6cqw;font-size:1.6cqw;font-weight:600}
+.mock-good .g-quote span{font-size:1.4cqw;color:#a8a29e}
+.mock-good .g-band{padding:6cqw 5cqw;display:flex;flex-direction:column;align-items:flex-start;gap:1.6cqw}
+.mock-good .g-foot{padding:2.6cqw 5cqw;border-top:1px solid #EEEDED;font-size:1.4cqw;color:#78716C;display:flex;justify-content:space-between}
 
 /* ============ Contact: WhatsApp qualifier widget ============ */
 .chat{
@@ -719,38 +756,75 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
         <h3>Același business. Copy <span class="serif-i">diferit.</span></h3>
         <p>Așa arată un site generat doar cu AI — și așa arată după ce trece prin mâinile noastre. Trage de mâner spre stânga și vezi diferența.</p>
       </div>
-      <div class="ba-frame">
-        <!-- before: generic AI template -->
-        <div class="ba-layer" aria-hidden="true">
-          <div class="mock mock-bad">
-            <div class="m-nav"><span class="m-logo">MyBusiness</span><span>Home</span><span>About</span><span>Services</span><span>Contact</span></div>
-            <div class="m-hero">
-              <div class="m-h1">Welcome To Our Amazing Website! 🚀</div>
-              <div class="m-p">We provide best solutions for all your business needs. Our team of experts is dedicated to deliver high quality services in today's fast-paced digital landscape.</div>
-              <div class="m-btns"><span class="m-btn">Learn More</span><span class="m-btn alt">Get Started</span></div>
+      <div class="ba-frame" id="ba-frame">
+        <div class="ba-scroll">
+          <div class="ba-stack">
+            <!-- before: generic AI template (full page) -->
+            <div class="ba-layer" aria-hidden="true">
+              <div class="mock mock-bad">
+                <div class="m-nav"><span class="m-logo">MyBusiness</span><span>Home</span><span>About</span><span>Services</span><span>Contact</span></div>
+                <div class="m-hero">
+                  <div class="m-h1">Welcome To Our Amazing Website! 🚀</div>
+                  <div class="m-p">We provide best solutions for all your business needs. Our team of experts is dedicated to deliver high quality services in today's fast-paced digital landscape.</div>
+                  <div class="m-btns"><span class="m-btn">Learn More</span><span class="m-btn alt">Get Started</span></div>
+                </div>
+                <div class="m-cards">
+                  <div class="m-card"><span class="m-emoji">💡</span><b>Innovative Solutions</b>We leverage cutting-edge technology to unlock your potential.</div>
+                  <div class="m-card"><span class="m-emoji">⚡</span><b>Fast Delivery</b>Seamless experiences delivered at lightning speed.</div>
+                  <div class="m-card"><span class="m-emoji">🏆</span><b>Best Quality</b>Excellence is at the heart of everything we do.</div>
+                </div>
+                <div class="m-sec">
+                  <div class="m-h2">About Us</div>
+                  <div class="m-p">We are a passionate team of dedicated professionals committed to excellence. With years of experience in the industry, we strive to exceed expectations and deliver innovative solutions that empower your business to thrive in the modern world.</div>
+                </div>
+                <div class="m-quote">"Great service! Highly recommended. Will definitely work with them again." ⭐⭐⭐⭐⭐<b>— John D., Happy Customer</b></div>
+                <div class="m-band">
+                  <div class="m-h2">Ready To Get Started?</div>
+                  <div class="m-p" style="color:#f0e8ff">Contact us today and let us take your business to the next level!</div>
+                  <span class="m-btn">Contact Us Today</span>
+                </div>
+                <div class="m-foot">© 2026 MyBusiness. All rights reserved. | Privacy Policy | Terms of Service</div>
+              </div>
             </div>
-            <div class="m-cards">
-              <div class="m-card"><span class="m-emoji">💡</span><b>Innovative Solutions</b>We leverage cutting-edge technology to unlock your potential.</div>
-              <div class="m-card"><span class="m-emoji">⚡</span><b>Fast Delivery</b>Seamless experiences delivered at lightning speed.</div>
-              <div class="m-card"><span class="m-emoji">🏆</span><b>Best Quality</b>Excellence is at the heart of everything we do.</div>
-            </div>
-          </div>
-        </div>
-        <!-- after: CopyStack version -->
-        <div class="ba-layer ba-after" aria-hidden="true">
-          <div class="mock mock-good">
-            <div class="m-nav"><span class="m-logo">Atelier<i>Verde</i></span><span class="m-cta">Cere ofertă</span></div>
-            <div class="m-hero">
-              <span class="m-eyebrow">Mobilier la comandă · București</span>
-              <div class="m-h1">Mobila care îți <em>vinde casa.</em></div>
-              <div class="m-p">Proiectată milimetric pe spațiul tău, montată în 4 săptămâni, garantată 10 ani. Fără șabloane, fără compromisuri.</div>
-              <div class="m-btns"><span class="m-btn">Cere ofertă în 24h</span><span class="m-btn alt">Vezi portofoliul</span></div>
-              <div class="m-proof"><b>★ 4.9</b> din 214 recenzii · 380+ proiecte montate</div>
-            </div>
-            <div class="m-stats">
-              <div class="m-stat"><b>4 săpt.</b><span>de la măsurători la montaj</span></div>
-              <div class="m-stat"><b>10 ani</b><span>garanție reală, în scris</span></div>
-              <div class="m-stat"><b>0 lei</b><span>proiectare 3D și consultanță</span></div>
+            <!-- after: CopyStack version (full page, warm minimalism) -->
+            <div class="ba-layer ba-after" aria-hidden="true">
+              <div class="mock mock-good">
+                <div class="g-nav"><span class="g-logo">Atelier<i>Verde</i></span><span class="g-cta">Cere ofertă</span></div>
+                <div class="g-hero">
+                  <span class="g-eyebrow">Mobilier la comandă · București</span>
+                  <div class="g-h1">Mobila care îți <em>vinde casa.</em></div>
+                  <div class="g-p">Proiectată milimetric pe spațiul tău, montată în 4 săptămâni, garantată 10 ani în scris. Fără șabloane, fără compromisuri.</div>
+                  <div class="g-btns"><span class="g-btn">Cere ofertă în 24h</span><span class="g-btn alt">Vezi portofoliul</span></div>
+                  <div class="g-proof"><b>★ 4.9</b> din 214 recenzii · 380+ proiecte montate</div>
+                </div>
+                <div class="g-stats">
+                  <div class="g-stat"><b>4 săpt.</b><span>de la măsurători la montaj</span></div>
+                  <div class="g-stat"><b>10 ani</b><span>garanție reală, în scris</span></div>
+                  <div class="g-stat"><b>0 lei</b><span>proiectare 3D și consultanță</span></div>
+                </div>
+                <div class="g-sec">
+                  <div class="g-h2">De la măsurători la montaj,<br>fără bătăi de cap.</div>
+                  <div class="g-steps">
+                    <div class="g-step"><i>Pasul 1</i><b>Măsurăm noi</b>Venim la tine, măsurăm milimetric și ascultăm cum trăiești în spațiu.</div>
+                    <div class="g-step"><i>Pasul 2</i><b>Vezi totul în 3D</b>Randări fotorealiste înainte să tai prima placă. Modifici oricât, gratuit.</div>
+                    <div class="g-step"><i>Pasul 3</i><b>Montăm în 4 săptămâni</b>Echipa noastră, nu subcontractori. Curat, punctual, garantat.</div>
+                  </div>
+                </div>
+                <div class="g-gallery">
+                  <div class="g-shot s1"><span>Bucătărie · Pipera</span></div>
+                  <div class="g-shot s2"><span>Dressing · Aviației</span></div>
+                </div>
+                <div class="g-quote">
+                  <div class="q">"Singura firmă din trei care a livrat <em>exact</em> ce a promis, exact când a promis."</div>
+                  <b>Ioana M.</b><span>bucătărie completă, februarie 2026</span>
+                </div>
+                <div class="g-band">
+                  <div class="g-h2">Spațiul tău merită<br>mai mult decât un șablon.</div>
+                  <div class="g-p">Trimite-ne planul sau câteva poze și primești o estimare onestă în 24 de ore.</div>
+                  <span class="g-btn">Cere ofertă în 24h</span>
+                </div>
+                <div class="g-foot"><span>AtelierVerde · București</span><span>Copy &amp; design: CopyStack</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -759,10 +833,10 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
         </div>
         <span class="ba-tag bad">Făcut doar cu AI</span>
         <span class="ba-tag good">Lucrat cu CopyStack</span>
-        <input class="ba-range" id="ba-range" type="range" min="2" max="98" value="72" step="0.5"
-               aria-label="Compară site-ul generat cu AI cu versiunea îmbunătățită de CopyStack">
+        <button class="ba-grab" id="ba-grab" role="slider" aria-valuemin="2" aria-valuemax="98" aria-valuenow="72"
+                aria-label="Compară site-ul generat cu AI cu versiunea îmbunătățită de CopyStack. Folosește săgețile stânga/dreapta."></button>
       </div>
-      <p class="ba-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trage spre stânga ca să vezi versiunea CopyStack</p>
+      <p class="ba-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Trage mânerul spre stânga · derulează în fereastră pentru pagina întreagă</p>
     </div>
   </div>
 </section>
@@ -1100,30 +1174,53 @@ h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;line-height
     tlSteps[0].querySelector(".tl-head").setAttribute("aria-expanded","true");
   }
 
-  /* Servicii: before/after website slider */
-  var baRange = document.getElementById("ba-range");
-  if (baRange){
-    var baAfter = document.querySelector(".ba-after"), baDiv = document.getElementById("ba-divider");
+  /* Servicii: before/after website slider (drag handle + scrollable pages) */
+  var baGrab = document.getElementById("ba-grab");
+  if (baGrab){
+    var baFrame = document.getElementById("ba-frame"),
+        baAfter = document.querySelector(".ba-after"),
+        baDiv = document.getElementById("ba-divider"),
+        baPos = 72, baDragging = false;
     function setBA(v){
-      baAfter.style.clipPath = "inset(0 0 0 " + v + "%)";
-      baDiv.style.left = v + "%";
+      baPos = Math.min(Math.max(v, 2), 98);
+      baAfter.style.clipPath = "inset(0 0 0 " + baPos + "%)";
+      baDiv.style.left = baPos + "%";
+      baGrab.style.left = baPos + "%";
+      baGrab.setAttribute("aria-valuenow", Math.round(baPos));
     }
-    baRange.addEventListener("input", function(){ setBA(+baRange.value); });
-    setBA(+baRange.value);
+    setBA(baPos);
+    baGrab.addEventListener("pointerdown", function(e){
+      baDragging = true;
+      baGrab.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    baGrab.addEventListener("pointermove", function(e){
+      if (!baDragging) return;
+      var r = baFrame.getBoundingClientRect();
+      setBA(((e.clientX - r.left) / r.width) * 100);
+    });
+    ["pointerup","pointercancel"].forEach(function(ev){
+      baGrab.addEventListener(ev, function(){ baDragging = false; });
+    });
+    baGrab.addEventListener("keydown", function(e){
+      var step = {ArrowLeft:-4, ArrowRight:4}[e.key];
+      if (step){ setBA(baPos + step); e.preventDefault(); }
+      else if (e.key === "Home"){ setBA(2); e.preventDefault(); }
+      else if (e.key === "End"){ setBA(98); e.preventDefault(); }
+    });
     /* nudge animation on first view, inviting the drag */
     if (!reduced){
       var baSeen = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if (!e.isIntersecting) return;
+        entries.forEach(function(en){
+          if (!en.isIntersecting) return;
           baSeen.disconnect();
-          var t0 = null, from = +baRange.value, dip = 26, dur = 1300;
+          var t0 = null, from = baPos, dip = 26, dur = 1300;
           (function nud(t){
+            if (baDragging) return;
             if (!t0) t0 = t;
             var p = Math.min((t - t0) / dur, 1);
-            var w = Math.sin(p * Math.PI);             /* out and back */
-            var v = from - dip * w * (1 - p * .25);
-            setBA(v); baRange.value = v;
-            if (p < 1) requestAnimationFrame(nud); else { setBA(from); baRange.value = from; }
+            setBA(from - dip * Math.sin(p * Math.PI));
+            if (p < 1) requestAnimationFrame(nud); else setBA(from);
           })(performance.now());
         });
       }, {threshold:.5});
